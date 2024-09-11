@@ -1,7 +1,10 @@
 #include "main.h"
 #include "lemlib/api.hpp"
 #include "pros/adi.hpp"
+#include "pros/misc.h"
+#include "pros/motors.h"
 #include "pros/rtos.hpp"
+#include <cstdio>
 #include <functional>
 #include <valarray>
 
@@ -12,16 +15,21 @@
 
 // ASSET(path_txt);
 
-pros::Motor left_front_motor(0, pros::E_MOTOR_GEARSET_06, true);
-pros::Motor left_center_motor(0, pros::E_MOTOR_GEARSET_06, true);
-pros::Motor left_back_motor(0, pros::E_MOTOR_GEARSET_06, true);
-pros::Motor right_front_motor(0, pros::E_MOTOR_GEARSET_06, false);
-pros::Motor right_center_motor(0, pros::E_MOTOR_GEARSET_06, false);
-pros::Motor right_back_motor(0, pros::E_MOTOR_GEARSET_06, false);
+pros::Motor left_front_motor(12, pros::E_MOTOR_GEAR_BLUE, true);
+pros::Motor left_center_motor(11, pros::E_MOTOR_GEAR_BLUE	, true);
+pros::Motor left_back_motor(14, pros::E_MOTOR_GEAR_BLUE	, true);    
+pros::Motor right_front_motor(1, pros::E_MOTOR_GEAR_BLUE	, false);
+pros::Motor right_center_motor(4, pros::E_MOTOR_GEAR_BLUE	, false);
+pros::Motor right_back_motor(20, pros::E_MOTOR_GEAR_BLUE	, false);
 
-pros::Motor intake(0); //
+pros::Motor intake(19); //
+pros::Motor intake2(15);
 
-pros::Imu inertial_sensor(0);
+// pros::Motor redirect(7); //
+
+pros::Imu inertial_sensor(6);
+
+pros::ADIDigitalOut clamp('H'); //backwings H, F
 
 
 pros::MotorGroup left_side_motors({left_front_motor, left_center_motor, left_back_motor});
@@ -29,24 +37,31 @@ pros::MotorGroup right_side_motors({right_front_motor, right_center_motor, right
 
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 
+bool intaking = false;
+bool outtaking = false;
+
 lemlib::Drivetrain drivetrain {
         &left_side_motors, // left drivetrain motors
         &right_side_motors, // right drivetrain motors
-        11.188, // track width
+        11.25, // track width
         3.25, // wheel diameter
         450, // wheel rpm
-        8
-        
+        0
 };
 
-pros::Rotation horizontal_rot(15, false); // port 1, not reversed
+// 3.5 in horizontal rot displacement
 
-lemlib::TrackingWheel horizontal_track(&horizontal_rot, 2.75, 4.252888446, 1); // 0.6 -0.9
+pros::Rotation horizontal_rot(10, false); // port 1, not reversed
 
+lemlib::TrackingWheel horizontal_track(&horizontal_rot, lemlib::Omniwheel::NEW_2 , 4); // 0.6 -0.9
+
+pros::Rotation vertical_rot(16, true); // port 1, not reversed
+
+lemlib::TrackingWheel vertical_track(&vertical_rot, lemlib::Omniwheel::NEW_2,3.375); // 0.6 -0.9
 
 // odometry struct
 lemlib::OdomSensors sensors {
-        nullptr, // vertical tracking wheel 1
+        &vertical_track, // vertical tracking wheel 1
         nullptr, // vertical tracking wheel 2
         // nullptr,
         &horizontal_track, // horizontal tracking wheel 1
@@ -55,31 +70,28 @@ lemlib::OdomSensors sensors {
 };
 
 // forward/backward PID
-lemlib::ControllerSettings lateralController {
-        4, // kP
-        0,
-        10, // kD
-        0,
-        0.75, // smallErrorRange
-        100, // smallErrorTimeout
-        2, // largeErrorRange
-        500, // largeErrorTimeout
-        5 // slew rate
-};
+lemlib::ControllerSettings lateralController(5.5, // proportional gain (kP)
+                                              0, // integral gain (kI)
+                                              7, // derivative gain (kD)
+                                              0, // anti windup
+                                              0, // small error range, in inches
+                                              0, // small error range timeout, in milliseconds
+                                              0, // large error range, in inches
+                                              0, // large error range timeout, in milliseconds
+                                              0 // maximum acceleration (slew)
+);
 
 // turning PID
-lemlib::ControllerSettings angularController {
-        1.4, // kP
-        0,
-        12, // kD
-        0,
-        1, // smallErrorRange
-        100, // smallErrorTimeout
-        3, // largeErrorRange
-        500, // largeErrorTimeout
-        40 // slew rate
-};
-
+lemlib::ControllerSettings angularController(7, // proportional gain (kP)
+                                              0, // integral gain (kI)
+                                              15, // derivative gain (kD)
+                                              0, // anti windup
+                                              0, // small error range, in inches
+                                              0, // small error range timeout, in milliseconds
+                                              0, // large error range, in inches
+                                              0, // large error range timeout, in milliseconds
+                                              0 // maximum acceleration (slew)
+);
 // lemlib::ControllerSettings angularController {
 //         1.5, // kP
 //         0,
@@ -98,6 +110,7 @@ double shooter_coeff = 0.775;
 bool hang_released = false;
 int auton_running = 0;
 int as = 0;
+bool clamped = false;
 
 
 void move(double power, double turn, bool swing=false) {
@@ -122,11 +135,11 @@ void move_drive(double power, double turn) {
     int left = power + turn;
     int right = power - turn;
 
-    if (left < 0) left = left - 9;
-    else if (left > 0) left = left + 9;
+    // if (left < 0) left = left - 9;
+    // else if (left > 0) left = left + 9;
 
-    if (right < 0) right = right - 9;
-    else if (right > 0) right = right + 9;
+    // if (right < 0) right = right - 9;
+    // else if (right > 0) right = right + 9;
 
 
     left_front_motor = left;
@@ -220,6 +233,7 @@ void rotate_to(double targetHeading, double turnAcc, double maxSpeed, bool swing
 void initialize() {
     pros::lcd::initialize(); // initialize brain screen
     horizontal_rot.reset_position();
+    vertical_rot.reset_position();
     chassis.calibrate(); // calibrate the chassis
     chassis.setPose(0, 0, 0); // X: 0, Y: 0, Heading: 0
     pros::Task screenTask(screen); // create a task to print the position to the screen
@@ -253,18 +267,6 @@ void right_auton() {
 }
 
 void autonomous() {
-    left_front_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-    left_back_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-    left_center_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-    right_front_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-    right_back_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-    right_center_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-    // left_auton();
-    // right_auton();
-}
-
-
-void opcontrol() {
     left_front_motor.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
     left_back_motor.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
     left_center_motor.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
@@ -272,10 +274,88 @@ void opcontrol() {
     right_back_motor.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
     right_center_motor.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
+    // drivetrain.
+    chassis.setPose(0, 0, 0);
+    pros::delay(1000);
+    
+    // chassis.turnToHeading(180, 100000);
+
+
+    chassis.moveToPoint(0,24, 150000, {.forwards = true}, true);
+    // left_auton();
+    // right_auton();
+}
+
+
+void opcontrol() {
+    left_front_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    left_back_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    left_center_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    right_front_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    right_back_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    right_center_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+
 	while (true) {
 
         int power = master.get_analog(ANALOG_LEFT_Y);
         int turn = master.get_analog(ANALOG_RIGHT_X);
-        move_drive(power, dampen(turn));
+
+        bool outtakebutton = master.get_digital_new_press(DIGITAL_X);
+        bool intakebutton = master.get_digital_new_press(DIGITAL_Y);
+
+        bool yesredirect = master.get_digital(DIGITAL_L1);
+        bool notredirect = master.get_digital(DIGITAL_L2);
+
+        bool clampbutton = master.get_digital_new_press(DIGITAL_R2);
+        bool unclamp = master.get_digital_new_press(DIGITAL_R1);
+
+        if (clampbutton){
+            clamp.set_value(true);
+        }
+        if (unclamp){
+            clamp.set_value(false);
+        }
+
+        // int intakepower = master.get_analog(ANALOG_RIGHT_X);
+        // intake.move(intakepower);
+        // move_drive(power, turn);
+        // std::printf("power %d", power);
+        // std::printf("turn %d", turn);
+        
+        chassis.arcade(power, turn - power/20);
+        //move_drive(power, turn);
+
+        if (intakebutton){
+            outtaking = false;
+            intaking = !intaking; 
+        }
+        else if (outtakebutton){
+            intaking = false;
+            outtaking = !outtaking;
+        }
+
+        if (outtaking){
+            intake.move(127);
+            intake2.move(127);
+        }
+        if (intaking){
+            intake.move(-127);
+            intake2.move(-127);
+        }
+        if(!intaking && !outtaking){
+            intake.move(0);
+            intake2.move(0);
+        }
+
+        // if (yesredirect){
+        //     redirect = -127;
+        // }
+        // else if (notredirect){
+        //     intake = 127;
+        // }
+        // else{
+        //     intake = 0;
+        // }
+        
 	}
 }
