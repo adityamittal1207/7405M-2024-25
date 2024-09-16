@@ -267,23 +267,23 @@ void right_auton() {
 }
 
 void autonomous() {
-    left_front_motor.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-    left_back_motor.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-    left_center_motor.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-    right_front_motor.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-    right_back_motor.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-    right_center_motor.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+//     left_front_motor.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+//     left_back_motor.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+//     left_center_motor.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+//     right_front_motor.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+//     right_back_motor.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+//     right_center_motor.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
-    // drivetrain.
-    chassis.setPose(0, 0, 0);
-    pros::delay(1000);
+//     // drivetrain.
+//     chassis.setPose(0, 0, 0);
+//     pros::delay(1000);
     
-    // chassis.turnToHeading(180, 100000);
+//     // chassis.turnToHeading(180, 100000);
 
 
-    chassis.moveToPoint(0,24, 150000, {.forwards = true}, true);
-    // left_auton();
-    // right_auton();
+//     chassis.moveToPoint(0,24, 150000, {.forwards = true}, true);
+//     // left_auton();
+//     // right_auton();
 }
 
 
