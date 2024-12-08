@@ -983,60 +983,57 @@ void redmogo(){
 
 void bluemogo(){
     clamp.set_value(true);
-    chassis.moveToPoint(0, -6.9, 700, {.forwards=false, .maxSpeed = 127});
-    chassis.turnToHeading(88.0, 700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127});
-    chassis.moveToPoint(-3.4, -6.9, 1300, {.forwards=false, .maxSpeed = 127});
-
-    pros::delay(600);
-    // intake.move(127);
-    // pros::delay(900);
-    // intake.move(0);
-
-    chassis.moveToPoint(3.3, -6.9, 1300, {.forwards=false, .maxSpeed = 127});
-    chassis.turnToHeading(228, 1300, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127});
-    chassis.moveToPoint(21.9, 9.1, 1300, {.forwards=false, .maxSpeed = 70});
-
-    pros::delay(1000);
-    //clamp.set_value(false);
-    //pros::delay(500);
-
-    chassis.turnToHeading(352.8, 1300, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 70});
-    chassis.moveToPoint(19.1, 26.6, 1300, {.forwards=true, .maxSpeed = 70});
-
-    /*
-    chassis.moveToPoint(0, -7.9, 700, {.forwards=false, .maxSpeed = 127});
-    chassis.turnToHeading(82.6, 700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127});
-    chassis.moveToPoint(-2.1, -8.2, 1300, {.forwards=false, .maxSpeed = 127});
-    pros::delay(600);
+    chassis.moveToPoint(0, -8, 700, {.forwards=false, .maxSpeed = 127});
+    chassis.turnToHeading(89, 700, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60});
+    chassis.moveToPoint(-4.5, -8, 1300, {.forwards=false, .maxSpeed = 70}, false);
     intake.move(127);
-    pros::delay(900);
+    pros::delay(500);
     intake.move(0);
-    chassis.moveToPoint(1, -7.9, 1300, {.forwards=false, .maxSpeed = 127});
-    chassis.turnToHeading(230, 1300, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127});
-    chassis.moveToPoint(13.6, -0.4, 1300, {.forwards=false, .maxSpeed = 70});
+    chassis.moveToPoint(3, -8, 1300, {.forwards=true, .maxSpeed = 70});
+    chassis.turnToHeading(226, 700, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60});
+    chassis.moveToPoint(21.4, 10, 1300, {.forwards=false, .maxSpeed = 80});
+    pros::delay(900);
+    clamp.set_value(false);
+    chassis.turnToHeading(355, 700, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60});
+    intake.move(127);
+    chassis.moveToPoint(20, 30, 1300, {.forwards=true, .maxSpeed = 80}, false);
+    pros::delay(600);
+    intake.move(0);
+    clamp.set_value(true);
+    chassis.moveToPoint(20.5, 39.8, 1300, {.forwards=true, .maxSpeed = 80});
+    chassis.turnToHeading(290.5, 900, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60});
+    chassis.moveToPoint(31, 38.3, 1600, {.forwards=false, .maxSpeed = 50});
     pros::delay(1000);
     clamp.set_value(false);
-    
-    pros::delay(500);
-    chassis.turnToHeading(5.3, 1300, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 70});
-    chassis.moveToPoint(14, 21, 1300, {.forwards=true, .maxSpeed = 70});
-    // chassis.turnToPoint(1.7, -9.6, 1500, {.forwards=false, .maxSpeed = 90});
-    // chassis.moveToPose(2.7, -7.8, -86.6, 1500, {.forwards=false, .maxSpeed=70});
-    // chassis.moveToPoint(2.7, -7.8, 1500, {.forwards=false, .maxSpeed = 70});
-    intake.move(127);
-    
-    //chassis.moveToPoint(-18.4, 25.3, 1500, {.forwards=true, .maxSpeed = 70});
-    clamp.set_value(true);
-    chassis.turnToHeading(149.5, 1300, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 70});
-    chassis.moveToPoint(33, -1.3, 1300, {.forwards=true, .maxSpeed = 70});
-    //chassis.turnToHeading(80, 1500, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 127});
-    //chassis.moveToPoint(-26.1, 20.4, 1500, {.forwards=false, .maxSpeed = 70});
-    //chassis.setPose(0, 0, 0);
+    lemlib::Pose p = lemlib::Pose(0, 0);
+    chassis.setPose(p);
+    chassis.moveToPoint(0, 10, 1600, {.forwards=true, .maxSpeed = 50});
+    chassis.turnToHeading(-99, 900, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60});
+    chassis.moveToPoint(-39, 2, 1600, {.forwards=true, .maxSpeed = 50});
+    //chassis.turnToHeading(178, 900, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60});
+    //chassis.moveToPoint(28.7, 18.1, 1300, {.forwards=false, .maxSpeed = 80});
 
-    //chassis.moveToPoint(-28.5, 21, 1500, {.forwards=false, .maxSpeed = 70});
 
-    // 0, -9.2.        1.7, -9.6
-    */
+    //chassis.turnToHeading(491, 700, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60});
+    //chassis.moveToPoint(37.6, 14, 1300, {.forwards=true, .maxSpeed = 80});
+
+    //pros::delay(600);
+    //intake.move(127);
+    //pros::delay(900);
+    //intake.move(0);
+}
+
+void redStupid(){
+    chassis.moveToPoint(0, -8.3, 1600, {.forwards=false, .maxSpeed = 50});
+    chassis.turnToHeading(90, 700, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60});
+    chassis.moveToPoint(-3.2, -8.3, 1600, {.forwards=false, .maxSpeed = 50});
+    chassis.moveToPoint(5.3, -8.5, 1600, {.forwards=true, .maxSpeed = 50});
+    chassis.turnToHeading(224, 700, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60});
+    chassis.moveToPoint(21.6, 9.3, 1600, {.forwards=false, .maxSpeed = 50});
+    chassis.turnToHeading(349, 700, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60});
+    chassis.moveToPoint(18.5, 20.4, 1600, {.forwards=true, .maxSpeed = 50});
+    chassis.turnToHeading(444, 700, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60});
+    chassis.moveToPoint(32.6, 31.4, 1600, {.forwards=true, .maxSpeed = 50});
 }
 
 void autonomous() {
@@ -1057,7 +1054,7 @@ void autonomous() {
     // redhighscore();
     // newredmogoside();
 
-    bluemogo();
+    redStupid();
 
     // chassis.turnToHeading(90, 3000, {.maxSpeed=127});
 
@@ -1169,36 +1166,39 @@ void opcontrol() {
         //     }
         // }
         if (wallstage == 1){
-            wallmotor.move(127);
-            if (pos > 3200 && pos < 3600){
-                wallmotor.move(0);
-            }
-            else if (pos > 3700){
-                wallmotor.move(-(pos-3400)*0.005);
-            }
-        }
-
-        if (wallstage == 2){
-            wallmotor.move(127);
-            if (pos > 13700 && pos < 14300){
-                wallmotor.move(0);
-            }
-            else if (pos > 14300){
-                wallmotor.move(-(pos-14100)*0.02);
-            }
-        }
-        if (wallstage == 3){
-            if (pos > 3950){
-                wallmotor.move(-127);
-            }
-            else if (pos > 3600){
-                wallmotor.move(-50);
-            }
-            else if (pos < 2800){
-                wallmotor.move(50);
+            if (pos < 4550 && pos > 3900){
+                wallmotor.brake();
+                // wallmotor.move(0);
             }
             else{
-                wallmotor.move(0);
+                wallmotor.move((pos-3500)*-0.05);
+            }
+            // if (pos < 3150){
+            //     wallmotor.move((pos-3150)*-0.5);
+            // }
+            // else if (pos > 4350){
+            //     wallmotor.move((pos-3150)*-0.5);
+            // }
+            // else{
+            //     wallmotor.move(0);
+            // }
+        }
+        else if (wallstage == 2){
+            if (pos < 15500 && pos > 15500){
+                wallmotor.brake();
+                // wallmotor.move(0);
+            }
+            else{
+                wallmotor.move((pos-15500)*-0.05);
+            }
+        }
+        else if (wallstage == 3){
+            if (pos < 4550 && pos > 3900){
+                wallmotor.brake();
+                // wallmotor.move(0);
+            }
+            else{
+                wallmotor.move((pos-3500)*-0.05);
             }
         }
         if (wallreturn){
