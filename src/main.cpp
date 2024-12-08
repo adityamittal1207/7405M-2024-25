@@ -946,31 +946,34 @@ void redhighscore() {
 
 void redmogo(){
     clamp.set_value(true);
-    chassis.moveToPoint(0, -7.9, 700, {.forwards=false, .maxSpeed = 127});
-    chassis.turnToHeading(-82.6, 700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127});
-    chassis.moveToPoint(2.1, -8.2, 1300, {.forwards=false, .maxSpeed = 127});
+    chassis.moveToPoint(0, -9.1, 700, {.forwards=false, .maxSpeed = 127});
+    //pros::delay(1000000000);
+    chassis.turnToHeading(-87, 700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127});
+    chassis.moveToPoint(2.2, -9.1, 1300, {.forwards=false, .maxSpeed = 127});
     pros::delay(600);
     intake.move(127);
     pros::delay(900);
     intake.move(0);
     chassis.moveToPoint(-1, -7.9, 1300, {.forwards=false, .maxSpeed = 127});
-    chassis.turnToHeading(-230, 1300, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127});
-    chassis.moveToPoint(-13.6, -0.4, 1300, {.forwards=false, .maxSpeed = 70});
+    chassis.turnToHeading(-232, 1300, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127});
+    chassis.moveToPoint(-24.7, 3.4, 1300, {.forwards=false, .maxSpeed = 120});
     pros::delay(1000);
     clamp.set_value(false);
     
     pros::delay(500);
-    chassis.turnToHeading(-5.3, 1300, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 70});
-    chassis.moveToPoint(-14, 21, 1300, {.forwards=true, .maxSpeed = 70});
+    chassis.turnToHeading(-15, 1300, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 70});
+    chassis.moveToPoint(-17, 21, 1300, {.forwards=true, .maxSpeed = 70});
     // chassis.turnToPoint(1.7, -9.6, 1500, {.forwards=false, .maxSpeed = 90});
     // chassis.moveToPose(2.7, -7.8, -86.6, 1500, {.forwards=false, .maxSpeed=70});
     // chassis.moveToPoint(2.7, -7.8, 1500, {.forwards=false, .maxSpeed = 70});
     intake.move(127);
     
     //chassis.moveToPoint(-18.4, 25.3, 1500, {.forwards=true, .maxSpeed = 70});
-    clamp.set_value(true);
     chassis.turnToHeading(-149.5, 1300, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 70});
-    chassis.moveToPoint(-33, -1.3, 1300, {.forwards=true, .maxSpeed = 70});
+    chassis.moveToPoint(-37, -1.3, 1300, {.forwards=true, .maxSpeed = 70});
+    wallmotor.move(70);
+    pros::delay(1300);
+    wallmotor.move(0);
     //chassis.turnToHeading(80, 1500, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 127});
     //chassis.moveToPoint(-26.1, 20.4, 1500, {.forwards=false, .maxSpeed = 70});
     //chassis.setPose(0, 0, 0);
@@ -1054,7 +1057,7 @@ void autonomous() {
     // redhighscore();
     // newredmogoside();
 
-    redStupid();
+    redmogo();
 
     // chassis.turnToHeading(90, 3000, {.maxSpeed=127});
 
@@ -1074,8 +1077,10 @@ void opcontrol() {
     right_back_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     right_center_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     wallmotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    wallstage = 4;
     int timer = 0;
     int pos = 0;
+    bool clamped2 = true;
 
 	while (true) {
 
@@ -1095,8 +1100,7 @@ void opcontrol() {
         bool wallcycler = master.get_digital_new_press(DIGITAL_L1);
         bool wallreturn = master.get_digital_new_press(DIGITAL_L2);
 
-        bool clampbutton = master.get_digital_new_press(DIGITAL_R2);
-        bool unclamp = master.get_digital_new_press(DIGITAL_R1);
+        bool clampbutton = master.get_digital_new_press(DIGITAL_R1);
 
         bool wallmech = false;
         bool aaaaaaa = false;
@@ -1106,6 +1110,13 @@ void opcontrol() {
         bool downwall = master.get_digital(DIGITAL_DOWN);
 
         bool hang = master.get_digital_new_press(DIGITAL_A);
+
+        if(clampbutton){
+            clamped2 = !clamped2;
+            clamp.set_value(clamped2);
+        }
+
+
 
         if (hang){
             // hangs.set_value(true);
@@ -1215,22 +1226,12 @@ void opcontrol() {
             }
         }
 
-        if (clamped){
+        if (clamped2){
             master.set_text(3, 0, ".");
         }
         else{
             master.set_text(3, 0, "");
         }
-        if (clampbutton){
-            clamp.set_value(true);
-            clamped = true;
-            
-        }
-        if (unclamp){
-            clamp.set_value(false);
-            clamped = false;
-        }
-
         // int intakepower = master.get_analog(ANALOG_RIGHT_X);
         // intake.move(intakepower);
         // move_drive(power, turn);
