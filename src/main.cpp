@@ -946,18 +946,22 @@ void redhighscore() {
 
 void redmogo(){
     clamp.set_value(true);
-    chassis.moveToPoint(0, -7.9, 1500, {.forwards=false, .maxSpeed = 127});
-    chassis.turnToHeading(-86.6, 1500, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127});
-    chassis.moveToPoint(2.0, -7.9, 1500, {.forwards=false, .maxSpeed = 127});
-    chassis.moveToPoint(-1, -7.9, 1500, {.forwards=false, .maxSpeed = 127});
-    chassis.turnToHeading(-230, 1500, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127});
-    chassis.moveToPoint(-13.6, -0.4, 1500, {.forwards=false, .maxSpeed = 70});
+    chassis.moveToPoint(0, -7.9, 700, {.forwards=false, .maxSpeed = 127});
+    chassis.turnToHeading(-86.6, 700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127});
+    chassis.moveToPoint(2.1, -7.9, 1300, {.forwards=false, .maxSpeed = 127});
+    pros::delay(600);
+    intake.move(127);
+    pros::delay(900);
+    intake.move(0);
+    chassis.moveToPoint(-1, -7.9, 1300, {.forwards=false, .maxSpeed = 127});
+    chassis.turnToHeading(-230, 1300, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127});
+    chassis.moveToPoint(-13.6, -0.4, 1300, {.forwards=false, .maxSpeed = 70});
     pros::delay(1000);
     clamp.set_value(false);
     
     pros::delay(500);
-    chassis.turnToHeading(-5.3, 1500, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 70});
-    chassis.moveToPoint(-14, 21, 1500, {.forwards=true, .maxSpeed = 70});
+    chassis.turnToHeading(-5.3, 1300, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 70});
+    chassis.moveToPoint(-14, 21, 1300, {.forwards=true, .maxSpeed = 70});
     // chassis.turnToPoint(1.7, -9.6, 1500, {.forwards=false, .maxSpeed = 90});
     // chassis.moveToPose(2.7, -7.8, -86.6, 1500, {.forwards=false, .maxSpeed=70});
     // chassis.moveToPoint(2.7, -7.8, 1500, {.forwards=false, .maxSpeed = 70});
@@ -965,8 +969,10 @@ void redmogo(){
     
     //chassis.moveToPoint(-18.4, 25.3, 1500, {.forwards=true, .maxSpeed = 70});
     clamp.set_value(true);
-    chassis.turnToHeading(80, 1500, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 127});
-    chassis.moveToPoint(-27.5, 20.4, 1500, {.forwards=false, .maxSpeed = 70});
+    chassis.turnToHeading(-149.5, 1300, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 70});
+    chassis.moveToPoint(-33, -1.3, 1300, {.forwards=true, .maxSpeed = 70});
+    //chassis.turnToHeading(80, 1500, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 127});
+    //chassis.moveToPoint(-26.1, 20.4, 1500, {.forwards=false, .maxSpeed = 70});
     //chassis.setPose(0, 0, 0);
 
     //chassis.moveToPoint(-28.5, 21, 1500, {.forwards=false, .maxSpeed = 70});
