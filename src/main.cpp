@@ -947,8 +947,8 @@ void redhighscore() {
 void redmogo(){
     clamp.set_value(true);
     chassis.moveToPoint(0, -7.9, 700, {.forwards=false, .maxSpeed = 127});
-    chassis.turnToHeading(-86.6, 700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127});
-    chassis.moveToPoint(2.1, -7.9, 1300, {.forwards=false, .maxSpeed = 127});
+    chassis.turnToHeading(-82.6, 700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127});
+    chassis.moveToPoint(2.1, -8.2, 1300, {.forwards=false, .maxSpeed = 127});
     pros::delay(600);
     intake.move(127);
     pros::delay(900);
@@ -980,6 +980,65 @@ void redmogo(){
     // 0, -9.2.        1.7, -9.6
 }
 
+
+void bluemogo(){
+    clamp.set_value(true);
+    chassis.moveToPoint(0, -6.9, 700, {.forwards=false, .maxSpeed = 127});
+    chassis.turnToHeading(88.0, 700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127});
+    chassis.moveToPoint(-3.4, -6.9, 1300, {.forwards=false, .maxSpeed = 127});
+
+    pros::delay(600);
+    // intake.move(127);
+    // pros::delay(900);
+    // intake.move(0);
+
+    chassis.moveToPoint(3.3, -6.9, 1300, {.forwards=false, .maxSpeed = 127});
+    chassis.turnToHeading(228, 1300, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127});
+    chassis.moveToPoint(21.9, 9.1, 1300, {.forwards=false, .maxSpeed = 70});
+
+    pros::delay(1000);
+    //clamp.set_value(false);
+    //pros::delay(500);
+
+    chassis.turnToHeading(352.8, 1300, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 70});
+    chassis.moveToPoint(19.1, 26.6, 1300, {.forwards=true, .maxSpeed = 70});
+
+    /*
+    chassis.moveToPoint(0, -7.9, 700, {.forwards=false, .maxSpeed = 127});
+    chassis.turnToHeading(82.6, 700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127});
+    chassis.moveToPoint(-2.1, -8.2, 1300, {.forwards=false, .maxSpeed = 127});
+    pros::delay(600);
+    intake.move(127);
+    pros::delay(900);
+    intake.move(0);
+    chassis.moveToPoint(1, -7.9, 1300, {.forwards=false, .maxSpeed = 127});
+    chassis.turnToHeading(230, 1300, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127});
+    chassis.moveToPoint(13.6, -0.4, 1300, {.forwards=false, .maxSpeed = 70});
+    pros::delay(1000);
+    clamp.set_value(false);
+    
+    pros::delay(500);
+    chassis.turnToHeading(5.3, 1300, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 70});
+    chassis.moveToPoint(14, 21, 1300, {.forwards=true, .maxSpeed = 70});
+    // chassis.turnToPoint(1.7, -9.6, 1500, {.forwards=false, .maxSpeed = 90});
+    // chassis.moveToPose(2.7, -7.8, -86.6, 1500, {.forwards=false, .maxSpeed=70});
+    // chassis.moveToPoint(2.7, -7.8, 1500, {.forwards=false, .maxSpeed = 70});
+    intake.move(127);
+    
+    //chassis.moveToPoint(-18.4, 25.3, 1500, {.forwards=true, .maxSpeed = 70});
+    clamp.set_value(true);
+    chassis.turnToHeading(149.5, 1300, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 70});
+    chassis.moveToPoint(33, -1.3, 1300, {.forwards=true, .maxSpeed = 70});
+    //chassis.turnToHeading(80, 1500, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 127});
+    //chassis.moveToPoint(-26.1, 20.4, 1500, {.forwards=false, .maxSpeed = 70});
+    //chassis.setPose(0, 0, 0);
+
+    //chassis.moveToPoint(-28.5, 21, 1500, {.forwards=false, .maxSpeed = 70});
+
+    // 0, -9.2.        1.7, -9.6
+    */
+}
+
 void autonomous() {
     left_front_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     left_back_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
@@ -998,7 +1057,7 @@ void autonomous() {
     // redhighscore();
     // newredmogoside();
 
-    redmogo();
+    bluemogo();
 
     // chassis.turnToHeading(90, 3000, {.maxSpeed=127});
 
