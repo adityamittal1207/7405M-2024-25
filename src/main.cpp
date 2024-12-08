@@ -29,7 +29,7 @@ pros::Motor right_back_motor(10, pros::E_MOTOR_GEAR_BLUE	, false);
 pros::Motor intake(-21); //
 pros::Motor intake2(0);
 
-pros::Motor wallmotor(-8);
+pros::Motor wallmotor(8);
 
 // pros::Motor redirect(7); //
 
@@ -1170,10 +1170,10 @@ void opcontrol() {
         // }
         if (wallstage == 1){
             wallmotor.move(127);
-            if (pos > 2900 && pos < 3400){
+            if (pos > 3200 && pos < 3600){
                 wallmotor.move(0);
             }
-            else if (pos > 3400){
+            else if (pos > 3700){
                 wallmotor.move(-(pos-3400)*0.005);
             }
         }
@@ -1188,11 +1188,14 @@ void opcontrol() {
             }
         }
         if (wallstage == 3){
-            if (pos > 3500){
+            if (pos > 3950){
                 wallmotor.move(-127);
             }
-            else if (pos < 3000){
-                wallmotor.move(20);
+            else if (pos > 3600){
+                wallmotor.move(-50);
+            }
+            else if (pos < 2800){
+                wallmotor.move(50);
             }
             else{
                 wallmotor.move(0);
