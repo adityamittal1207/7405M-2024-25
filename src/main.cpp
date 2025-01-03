@@ -1526,9 +1526,9 @@ void opcontrol() {
     int timer = 0;
     int pos = 0;
     float pwall, iwall, dwall;
-    pwall = 0.03f;
+    pwall = 0.025f;
     iwall = 0.0f;
-    dwall = 0.01f;
+    dwall = 0.0f;
     float threshold = 5.0f;
     bool clamped2 = false;
     float preverr = 0.0f;
@@ -1537,6 +1537,7 @@ void opcontrol() {
     float err;
     int stage = 0;
     bool lastCycle = false;
+    wallmotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 	while (true) {
 
         int power = master.get_analog(ANALOG_LEFT_Y);
@@ -1566,7 +1567,7 @@ void opcontrol() {
         if(wallreturn){
             stage = 0;
         }
-        targetpos = (stage == 1) * 35.5f + (stage == 2) * 150.0f;
+        targetpos = (stage == 1) * 35.5f + (stage == 2) * 140.0f;
 
         bool clampbutton = master.get_digital_new_press(DIGITAL_R1);
 

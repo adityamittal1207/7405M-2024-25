@@ -12,7 +12,7 @@
         "UNICODE",
         "_UNICODE"
       ],
-      "compilerPath": "/Users/adityamittal/Library/Application Support/Code/User/globalStorage/sigbots.pros/install/pros-toolchain-macos/bin/arm-none-eabi-g++",
+      "compilerPath": "/Users/guneetkapur/Library/Application Support/Code/User/globalStorage/sigbots.pros/install/pros-toolchain-macos/bin/arm-none-eabi-g++",
       "cStandard": "gnu11",
       "cppStandard": "gnu++20",
       "intelliSenseMode": "gcc-arm",
@@ -21,7 +21,7 @@
       ],
       "browse": {
         "path": [
-          "/Users/adityamittal/Coding Projects/7405M-2024-25"
+          "/Users/guneetkapur/VEX 24-25/7405M-2024-25"
         ],
         "limitSymbolsToIncludedHeaders": true,
         "databaseFilename": ""
