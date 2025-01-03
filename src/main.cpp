@@ -1169,7 +1169,7 @@ void redMogoG(){
     chassis.moveToPoint(0, 7, 700, {.forwards=true, .maxSpeed=80}, true);
     chassis.turnToHeading(-3, 300, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60});
     wallmotor.move(127);
-    pros::delay(700);
+    pros::delay(550);
     wallmotor.move(0);
     wallmotor.move(-127);
     chassis.turnToHeading(-33.5, 700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 70});
@@ -1179,7 +1179,7 @@ void redMogoG(){
     //chassis.moveToPoint(5, 0.1, 850, {.forwards=false, .maxSpeed=80}, true);
     //chassis.turnToHeading(0.3, 800, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60});
     chassis.moveToPoint(4.3, -16, 1000, {.forwards=false, .maxSpeed=120}, true);
-    pros::delay(750);
+    pros::delay(950);
     clamp.set_value(true);
     chassis.turnToHeading(-481, 900, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60});
     chassis.moveToPoint(-16, -27.8, 1000, {.forwards=true, .maxSpeed=100}, true);
@@ -1199,19 +1199,27 @@ void redMogoG(){
     chassis.turnToHeading(99, 1000, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60});
     chassis.moveToPoint(-4, -17, 1000, {.forwards=true, .maxSpeed=80}, true);
     intake.move(127);
+    wallmotor.move(127);
+    pros::delay(600);
+    wallmotor.move(0);
     
 
 }   
 
 void bluMogoG(){
+
+    // move_drive(-40, 0);
+    // pros::delay(700);
+    pros::delay(1000);
+
     clamp.set_value(false);
     
-    chassis.moveToPoint(0, 7, 600, {.forwards=true, .maxSpeed=80}, false);
-    chassis.setPose(0, 7, 0);
+    chassis.moveToPoint(0, 7.3, 600, {.forwards=true, .maxSpeed=80}, false);
+    chassis.setPose(0, 7.3, 0);
     // pros::delay(2527575572572572525);
     chassis.turnToHeading(3, 600, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60});
     wallmotor.move(127);
-    pros::delay(600);
+    pros::delay(700);
     wallmotor.move(-127);
     pros::delay(100);
     chassis.moveToPoint(-5, 0.1, 800, {.forwards=false, .maxSpeed=80}, true);
@@ -1229,9 +1237,9 @@ void bluMogoG(){
     
     chassis.turnToHeading(20, 900, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60});
     chassis.moveToPoint(29.6, -3.4, 900, {.forwards=true, .maxSpeed=80}, true);
-    chassis.moveToPoint(31, -13.6, 900, {.forwards=false, .maxSpeed=80}, true);
     pros::delay(300);
-    intake.move(-127);
+    intake.move(0-127);
+    chassis.moveToPoint(31, -13.6, 900, {.forwards=false, .maxSpeed=80}, true);
     ////hassis.moveToPoint(15, -15, 900, {.forwards=false, .maxSpeed=80}, true);
     pros::delay(500);
     intake.move(127);
@@ -1245,6 +1253,9 @@ void bluMogoG(){
     chassis.turnToHeading(-72.8, 900, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60});
     chassis.moveToPoint(-4.6, 0.6, 1000, {.forwards=true, .maxSpeed=80}, true);
     arin_je_crncuga(true, 0.4);
+    wallmotor.move(127);
+    pros::delay(600);
+    wallmotor.move(0);
 
     
 
@@ -1252,7 +1263,6 @@ void bluMogoG(){
 
 void bluRingG(){
     clamp.set_value(false);
-    
     chassis.moveToPoint(0, 7, 700, {.forwards=true, .maxSpeed=80}, true);
     chassis.turnToHeading(-3, 700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60});
     wallmotor.move(127);
@@ -1337,19 +1347,19 @@ void redRingA(){
     wallmotor.move(0);
     pros::delay(725);
     clamp.set_value(true);
-    chassis.turnToHeading(122, 900, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60});
-    chassis.moveToPoint(8.4, -27.5, 1000, {.forwards=true, .maxSpeed=80}, true);
+    chassis.turnToHeading(122, 800, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60});
+    chassis.moveToPoint(8.4, -27.5, 700, {.forwards=true, .maxSpeed=80}, true);
     intake.move(127);
     
-    chassis.turnToHeading(278, 1000, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60});
+    chassis.turnToHeading(278, 800, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60});
 
     // pros::delay(242424242424424);
     
-    chassis.moveToPoint(0.9, -27.7, 1000, {.forwards=true, .maxSpeed=80}, true);
+    chassis.moveToPoint(0.9, -27.7, 800, {.forwards=true, .maxSpeed=80}, true);
 
     // pros::delay(294294924924924244242424);
     
-    chassis.turnToHeading(200, 1500, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60});
+    chassis.turnToHeading(200, 600, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 70});
     chassis.moveToPoint(-4.1, -39.2, 1300, {.forwards=true, .maxSpeed=35}, false);
     pros::delay(400);
     chassis.moveToPoint(-2.6, -35.3, 1300, {.forwards=false, .maxSpeed=50}, true);
@@ -1401,15 +1411,15 @@ void redRingG(){
     
     chassis.turnToHeading(182, 1500, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60});
     chassis.moveToPoint(-2.9, -38.7, 1300, {.forwards=true, .maxSpeed=35}, false);
-    pros::delay(400);
+    pros::delay(300);
     chassis.moveToPoint(-2.4, -32.3, 1300, {.forwards=false, .maxSpeed=50}, true);
     chassis.turnToHeading(161, 1000, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60});
     chassis.moveToPoint(3.3, -48.6, 1300, {.forwards=true, .maxSpeed=35}, true);
-    pros::delay(400);
+    pros::delay(300);
     chassis.moveToPoint(2.08, -34.4, 1000, {.forwards=false, .maxSpeed=80}, true);
     chassis.turnToHeading(297, 750, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60});
     chassis.moveToPoint(-20.4, -23.4, 1000, {.forwards=true, .maxSpeed=80}, true);
-    arin_je_crncuga(true,0.1 );
+    arin_je_crncuga(true,0.75);
 
 
 
@@ -1467,7 +1477,7 @@ void turnAuton(){
 }
 
 void autonomous() {
-    doinkigga.set_value(true);
+    doinkigga.set_value(false);
     left_front_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     left_back_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     left_center_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
@@ -1480,7 +1490,9 @@ void autonomous() {
     //turnAuton();
     // bluRingG();
     // redRingG();
-    redRingA();
+    // redRingA();
+    // redRingG();
+    bluMogoG();
 
 
 
@@ -1510,11 +1522,14 @@ void autonomous() {
     
 }
 
+#define targetWait 37
+#define targetTop 145
+
 void opcontrol() {
 
-    bool doinkdoinkdoinkdoinkdoink = true;
-    bool doinkdoink2 = true;
-    doinkigga.set_value(true);
+    bool doinkdoinkdoinkdoinkdoink = false;
+    bool doinkdoink2 = false;
+    doinkigga.set_value(false);
     left_front_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     left_back_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     left_center_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
@@ -1526,48 +1541,72 @@ void opcontrol() {
     int timer = 0;
     int pos = 0;
     float pwall, iwall, dwall;
-    pwall = 0.025f;
+    pwall = 0.03f;
     iwall = 0.0f;
     dwall = 0.0f;
     float threshold = 5.0f;
     bool clamped2 = false;
     float preverr = 0.0f;
     float sumerrorwall = 0.0f;
-    float targetpos = 37.0f;
+    float targetpos = targetWait;
     float err;
     int stage = 0;
     bool lastCycle = false;
     wallmotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    bool manual = false;
 	while (true) {
 
         int power = master.get_analog(ANALOG_LEFT_Y);
         int turn = master.get_analog(ANALOG_RIGHT_X);
+        bool manualswitch = master.get_digital_new_press(DIGITAL_LEFT);
+        if(manualswitch){
+            manual = !manual;
+        }
 
         bool outtakebutton = master.get_digital_new_press(DIGITAL_X);
         bool intakebutton = master.get_digital_new_press(DIGITAL_Y);
-        
+        bool wallcycler = master.get_digital_new_press(DIGITAL_L1);
+        bool wallreturn = master.get_digital_new_press(DIGITAL_L2);
         pos = wallrot.get_position()/100.0f;
         err = targetpos - pos;
         float derr = err-preverr;
         sumerrorwall += err;
         float ret = pwall * err + iwall * sumerrorwall + dwall * derr;
+        if(manual){goto skp;}
         wallmotor.move((ret * 127) > 127 ? 127 : (ret*127));
         // bool yesredirect = master.get_digital(DIGITAL_L1);
         // bool notredirect = master.get_digital(DIGITAL_L2);
 
-        bool wallcycler = master.get_digital_new_press(DIGITAL_L1);
-        bool wallreturn = master.get_digital_new_press(DIGITAL_L2);
+        
         if(wallcycler && !lastCycle){
+            sumerrorwall = 0.0f;
             stage = (stage <= 1 ? stage + 1 : 1);
             if(stage == 2){
                 intaking = false;
-                outtaking = false;
+                outtaking = true;
             }
         }
         if(wallreturn){
+            sumerrorwall = 0.0f;
             stage = 0;
         }
-        targetpos = (stage == 1) * 35.5f + (stage == 2) * 140.0f;
+        // if(fabs(wallrot.get_angle() % 360) < 3.0f){
+        //     wallrot.set_position(0);
+        // }
+        targetpos = (stage == 1) * targetWait + (stage == 2) * targetTop;
+        goto skp2;
+        skp:;
+        if(master.get_digital(DIGITAL_UP)){
+            wallmotor.move(127);
+        }
+        else if(master.get_digital(DIGITAL_DOWN)){
+            wallmotor.move(-127);
+        }
+        else {
+        wallmotor.move(0);
+        }
+
+        skp2:;
 
         bool clampbutton = master.get_digital_new_press(DIGITAL_R1);
 
