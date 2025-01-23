@@ -1383,7 +1383,9 @@ void redRingA(){
 void bluRingA(){
     clamp.set_value(false);
     
-    chassis.moveToPoint(0, 7.7, 700, {.forwards=true, .maxSpeed=80}, false);
+    chassis.moveToPoint(0, 7, 700, {.forwards=true, .maxSpeed=80}, true);
+    chassis.turnToHeading(-6, 700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60});
+
     wallmotor.move(127);
     pros::delay(750);
     wallmotor.move(0);
