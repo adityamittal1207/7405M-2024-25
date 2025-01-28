@@ -37,7 +37,7 @@ pros::Imu inertial_sensor(20);
 
 pros::ADIDigitalOut clamp('A'); //backwings H, F
 pros::ADIDigitalOut hangs('G');
-pros::ADIDigitalOut doinkigga('B');
+pros::ADIDigitalOut doinker('B');
 pros::ADIDigitalOut raiseasdasd('c');
 
 
@@ -1454,13 +1454,7 @@ void redRingG(){
     wallmotor.move(0);
     wallmotor.move(-127);
     // chassis.turnToHeading(-33.5, 1500, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60});
-    
     // wallmotor.move(0);
-
-    
-
-  
-
     // chassis.moveToPoint(5, 0.1, 1599, {.forwards=false, .maxSpeed=80}, true);
     // chassis.turnToHeading(0.3, 1500, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60});
     chassis.moveToPoint(-2, -17, 1100, {.forwards=false, .maxSpeed=70}, true);
@@ -1615,8 +1609,20 @@ void skillsAuton() {
     chassis.moveToPoint(49, -3, 4000, {.forwards=true, .maxSpeed = 30});  
 }
 
+float sumError2 = 0.0f;
+float p2 = 0.1f;
+float targetPos2 = 30;
+
+void pidUpdate() {
+    float error = targetPos2 - wallrot.get_angle();
+    float returnVolt = p2 * error;
+    wallmotor.move(127*returnVolt);
+    p2 = 0.01;
+
+}
+
 void autonomous() {
-    doinkigga.set_value(false);
+    doinker.set_value(false);
     //clamp.set_value
     left_front_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     left_back_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
@@ -1660,7 +1666,9 @@ void autonomous() {
     // pros::delay(1000);
     
     // chassis.turnToHeading(180, 100000);
-    
+    pros::task_t my_task = task_create(pidUpdate, (void*)"PROS", TASK_PRIORITY_DEFAULT,
+                               TASK_STACK_DEPTH_DEFAULT, "My Task");
+    pros::Task my_cpp_task (my_task);
 }
 
 #define targetWait 29
@@ -1671,7 +1679,7 @@ void opcontrol() {
 
     bool doinkdoinkdoinkdoinkdoink = false;
     bool doinkdoink2 = false;
-    doinkigga.set_value(false);
+    doinker.set_value(false);
     left_front_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     left_back_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     left_center_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
@@ -1775,7 +1783,7 @@ void opcontrol() {
 
         if(doinkdoink2){
             doinkdoinkdoinkdoinkdoink = !doinkdoinkdoinkdoinkdoink;
-            doinkigga.set_value(doinkdoinkdoinkdoinkdoink);
+            doinker.set_value(doinkdoinkdoinkdoinkdoink);
         }
 
         // if (toptwo){
