@@ -19,25 +19,26 @@
 
 // ASSET(path_txt);
 
-pros::Motor left_front_motor(11, pros::E_MOTOR_GEAR_BLUE, true);
-pros::Motor left_center_motor(7, pros::E_MOTOR_GEAR_BLUE	, false);
-pros::Motor left_back_motor(6, pros::E_MOTOR_GEAR_BLUE	, true);    
-pros::Motor right_front_motor(5, pros::E_MOTOR_GEAR_BLUE	, false);
-pros::Motor right_center_motor(4, pros::E_MOTOR_GEAR_BLUE	, true);
-pros::Motor right_back_motor(10, pros::E_MOTOR_GEAR_BLUE	, false);
+pros::Motor left_front_motor(1, pros::E_MOTOR_GEAR_BLUE, true);
+pros::Motor left_center_motor(2, pros::E_MOTOR_GEAR_BLUE	, false);
+pros::Motor left_back_motor(3, pros::E_MOTOR_GEAR_BLUE	, true);    
+pros::Motor right_front_motor(4, pros::E_MOTOR_GEAR_BLUE	, false);
+pros::Motor right_center_motor(5, pros::E_MOTOR_GEAR_BLUE	, true);
+pros::Motor right_back_motor(6, pros::E_MOTOR_GEAR_BLUE	, false);
 
-pros::Motor intake(12, pros::E_MOTOR_GEAR_BLUE, true); //
+pros::Motor intake(7, pros::E_MOTOR_GEAR_BLUE, false); //reversed
 pros::Motor intake2(0);
 
 pros::Motor wallmotor(8);
 
 // pros::Motor redirect(7); //
 
-pros::Imu inertial_sensor(9);
+pros::Imu inertial_sensor(20);
 
-pros::ADIDigitalOut clamp('H'); //backwings H, F
+pros::ADIDigitalOut clamp('A'); //backwings H, F
 pros::ADIDigitalOut hangs('G');
 pros::ADIDigitalOut doinkigga('B');
+pros::ADIDigitalOut raiseasdasd('c');
 
 
 pros::MotorGroup left_side_motors({left_front_motor, left_center_motor, left_back_motor});
@@ -48,6 +49,7 @@ pros::Controller master(pros::E_CONTROLLER_MASTER);
 bool intaking = false;
 bool outtaking = false;
 int wallstage = 0;
+bool raised = false;
 
 lemlib::Drivetrain drivetrain {
         &left_side_motors, // left drivetrain motors
@@ -60,11 +62,13 @@ lemlib::Drivetrain drivetrain {
 
 // 3.5 in horizontal rot displacement
 
-pros::Rotation wallrot(1, false); 
+pros::Rotation wallrot(19, false); 
 
-pros::Rotation horizontal_rot(3); // port 1, not reversed
+pros::Rotation horizontal_rot(10); // port 1, not reversed
+pros::Rotation vertical_rot(9); // port 1, not reversed
 
-lemlib::TrackingWheel horizontal_track(&horizontal_rot, lemlib::Omniwheel::NEW_275 , -3.6); // 0.6 -0.9
+lemlib::TrackingWheel horizontal_track(&horizontal_rot, lemlib::Omniwheel::NEW_275 , -3.6f); // 0.6 -0.9
+lemlib::TrackingWheel vertical_track(&vertical_rot, lemlib::Omniwheel::NEW_2 , 0.0f); // 0.6 -0.9
 
 // pros::Rotation vertical_rot(16, true); // port 1, not reversed
 
@@ -72,7 +76,7 @@ lemlib::TrackingWheel horizontal_track(&horizontal_rot, lemlib::Omniwheel::NEW_2
 
 // odometry struct
 lemlib::OdomSensors sensors {
-        nullptr, // vertical tracking wheel 1
+        &vertical_track, // vertical tracking wheel 1
         nullptr, // vertical tracking wheel 2
         // nullptr,
         &horizontal_track, // horizontal tracking wheel 1
@@ -81,9 +85,9 @@ lemlib::OdomSensors sensors {
 };
 
 // forward/backward PID
-lemlib::ControllerSettings lateralController(16, // proportional gain (kP)
-                                              0.01, // integral gain (kI)
-                                              6.5, // derivative gain (kD)
+lemlib::ControllerSettings lateralController(15.5, // proportional gain (kP)
+                                              0.005, // integral gain (kI)
+                                              4.7, // derivative gain (kD)
                                               0, // anti windup
                                               0.5, // small error range, in inches
                                               1000, // small error range timeout, in milliseconds
@@ -103,9 +107,9 @@ lemlib::ControllerSettings lateralController(16, // proportional gain (kP)
 //                                             3000, // large error range timeout, in milliseconds
 //                                               0 // maximum acceleration (slew)
 // );
-lemlib::ControllerSettings angularController(4.4, // proportional gain (kP)
-                                              0.2, // integral gain (kI)
-                                              20, // derivative gain (kD)
+lemlib::ControllerSettings angularController(3.0, // proportional gain (kP)
+                                              0.1, // integral gain (kI)
+                                              15, // derivative gain (kD)
                                               4, // anti windup
                                               1, // small error range, in inches
                                               1000, // small error range timeout, in milliseconds
@@ -515,6 +519,12 @@ void redmogorush() {
 
 }
 
+void random123(){
+    chassis.moveToPoint(0, 20, 700, {.forwards = true, .maxSpeed = 120}, false);
+    chassis.turnToPoint(90, 11.1, 1500, {.forwards = true, .maxSpeed = 40});
+}
+
+
 void bluehighscore(){
     intake2.move(127);
     chassis.moveToPoint(0, 8, 700, {.forwards = true, .maxSpeed = 120}, false);
@@ -737,7 +747,7 @@ void newbluemogoside() {
 
 void newredmogoside() {
 
-    pros::delay(29929292929222);
+    pros::delay(0);
     intake2.move(127);
 
     // pros::delay(29929292929222);
@@ -1535,8 +1545,79 @@ void turnAuton(){
     chassis.turnToHeading(0, 1500, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60});
 }
 
+void redRingAuton123() {
+    clamp.set_value(true);
+    chassis.turnToHeading(-2, 550, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60});
+    wallmotor.move(-57);
+    pros::delay(400);
+    wallmotor.move(-20);
+    pros::delay(200);
+    chassis.moveToPoint(0.7, 7.8, 600, {.forwards=true, .maxSpeed = 40}, false);
+    pros::delay(100);
+    wallmotor.move(100);
+    pros::delay(300);
+    wallmotor.move(0);
+    chassis.moveToPoint(0.0, -8, 700, {.forwards=false, .maxSpeed = 100});
+    chassis.turnToHeading(-43.6, 550, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60});
+    chassis.moveToPoint(16, -27, 800, {.forwards=false, .maxSpeed = 100});
+    pros::delay(600);
+    clamp.set_value(false);
+    chassis.turnToHeading(-130, 700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60});
+    intake.move(127);
+    chassis.moveToPoint(4.1, -40.7, 700, {.forwards=true, .maxSpeed = 100}, false);
+    pros::delay(200);
+    intake.move(-127);
+    //chassis.turnToHeading(-69, 500, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60});
+    //chassis.moveToPoint(-34.6, -25, 900, {.forwards=true, .maxSpeed = 100}, false);
+    //pros::delay(200);
+    //intake.move(127);
+    // chassis.turnToHeading(50, 1500, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60});
+    // chassis.moveToPoint(6.6, 4.9, 1700, {.forwards=true, .maxSpeed = 80}, false);
+    // wallmotor.move(70);
+    // pros::delay(700);
+    // wallmotor.move(0);
+    // pros::delay(200);
+    // chassis.moveToPoint(1.2, 0.3, 1700, {.forwards=true, .maxSpeed = 80});
+    // pros::delay(100);
+    // clamp.set_value(false);
+    // pros::delay(200);
+    // chassis.turnToHeading(11, 1500, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60});
+    // chassis.moveToPoint(-6.6, -32.3, 1700, {.forwards=false, .maxSpeed = 80});
+}
+
+void skillsAuton() {
+    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
+    clamp.set_value(true);
+    intake.move(127);
+    pros::delay(700);
+    intake.move(0);
+    pros::delay(200);
+    chassis.moveToPoint(0, 12, 500, {.forwards=true, .maxSpeed = 80});
+    chassis.turnToHeading(-89, 550, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60});
+    chassis.moveToPoint(21, 13, 700, {.forwards=false, .maxSpeed = 80});
+    pros::delay(600);
+    clamp.set_value(false);
+    chassis.turnToHeading(7, 600, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60});
+    chassis.moveToPoint(24.7, 38.1, 800, {.forwards=true, .maxSpeed = 80});
+    intake.move(127);
+    //cross auton line & get ring to store in lb
+    //go to auton line & turn towards wall stake while intaking ring
+    //score wall stake
+    chassis.turnToHeading(60, 600, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60});
+    chassis.moveToPoint(47, 67, 1100, {.forwards=true, .maxSpeed = 120});
+    chassis.turnToHeading(6, 500, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60});
+    chassis.moveToPoint(50, 92, 850, {.forwards=true, .maxSpeed = 100});
+    chassis.moveToPoint(46.7, 69.5, 800, {.forwards=false, .maxSpeed = 100});
+    chassis.turnToHeading(90.63, 900, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 25});
+    chassis.moveToPoint(63, 63, 700, {.forwards=true, .maxSpeed = 100});
+    chassis.moveToPoint(50, 62, 700, {.forwards=true, .maxSpeed = 100}); 
+    chassis.turnToHeading(180, 700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60}); 
+    chassis.moveToPoint(49, -3, 4000, {.forwards=true, .maxSpeed = 30});  
+}
+
 void autonomous() {
     doinkigga.set_value(false);
+    //clamp.set_value
     left_front_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     left_back_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     left_center_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
@@ -1552,8 +1633,8 @@ void autonomous() {
     // redRingA();
     // redRingG();
     // redMogoG();
-    bluMogoG();
-
+    //bluMogoG();
+    skillsAuton();
 
 
     // drivetrain.
@@ -1582,8 +1663,9 @@ void autonomous() {
     
 }
 
-#define targetWait 38
-#define targetTop 145
+#define targetWait 29
+#define targetTop 154
+#define targetDown 190
 
 void opcontrol() {
 
@@ -1601,9 +1683,9 @@ void opcontrol() {
     int timer = 0;
     int pos = 0;
     float pwall, iwall, dwall;
-    pwall = 0.03f;
+    pwall = 0.02f;
     iwall = 0.0f;
-    dwall = 0.0f;
+    dwall = 0.002f;
     float threshold = 5.0f;
     bool clamped2 = false;
     float preverr = 0.0f;
@@ -1627,6 +1709,7 @@ void opcontrol() {
         bool intakebutton = master.get_digital_new_press(DIGITAL_Y);
         bool wallcycler = master.get_digital_new_press(DIGITAL_L1);
         bool wallreturn = master.get_digital_new_press(DIGITAL_L2);
+        bool wallDown = master.get_digital_new_press(DIGITAL_DOWN);
         pos = wallrot.get_position()/100.0f;
         err = targetpos - pos;
         float derr = err-preverr;
@@ -1639,12 +1722,21 @@ void opcontrol() {
 
         
         if(wallcycler && !lastCycle){
-            sumerrorwall = 0.0f;
             stage = (stage <= 1 ? stage + 1 : 1);
             if(stage == 2){
                 intaking = false;
                 outtaking = false;
+                intake.move(-127);
+                pros::delay(50);
+                intake.move(0);
             }
+        }
+        if(wallDown){
+            stage = (stage != 3) ? 3 : 0;
+            sumerrorwall = 0.0f;
+        }
+        if(wallcycler || wallreturn){
+            sumerrorwall = 0.0f;
         }
         if(wallreturn){
             sumerrorwall = 0.0f;
@@ -1653,18 +1745,10 @@ void opcontrol() {
         // if(fabs(wallrot.get_angle() % 360) < 3.0f){
         //     wallrot.set_position(0);
         // }
-        targetpos = (stage == 1) * targetWait + (stage == 2) * targetTop;
+        targetpos = (stage == 1) * targetWait + (stage == 2) * targetTop + (stage == 3) * targetDown;
         goto skp2;
         skp:;
-        if(master.get_digital(DIGITAL_UP)){
-            wallmotor.move(127);
-        }
-        else if(master.get_digital(DIGITAL_DOWN)){
-            wallmotor.move(-127);
-        }
-        else {
-        wallmotor.move(0);
-        }
+
 
         skp2:;
 
@@ -1684,22 +1768,14 @@ void opcontrol() {
             clamp.set_value(clamped2);
         }
 
+        if(master.get_digital_new_press(DIGITAL_UP)){
+            raised = !raised;
+            raiseasdasd.set_value(raised);
+        }
+
         if(doinkdoink2){
             doinkdoinkdoinkdoinkdoink = !doinkdoinkdoinkdoinkdoink;
             doinkigga.set_value(doinkdoinkdoinkdoinkdoink);
-        }
-
-        if (toptwo || downwall){
-            macro = false;
-        }
-
-        if (toptwo){
-            wallstage = 5;
-            wallmotor.move(127);
-        }
-        else if (downwall){
-            wallstage = 5;
-            wallmotor.move(-127);
         }
 
         // if (toptwo){
