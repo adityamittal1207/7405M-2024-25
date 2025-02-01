@@ -1618,8 +1618,8 @@ void skillsAuton() {
     intake.move(127);
     chassis.moveToPoint(-25, 18, 1000, {.forwards=true, .maxSpeed = 50});
     chassis.turnToHeading(90, 1000, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 55});
-    chassis.moveToPoint(-28, 18, 2000, {.forwards=false, .maxSpeed = 80});
-    pros::delay(1800);
+    chassis.moveToPoint(-30, 18, 2200, {.forwards=false, .maxSpeed = 90});
+    pros::delay(2000);
     clamp.set_value(false);
 
     chassis.turnToHeading(367, 800, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 50});
