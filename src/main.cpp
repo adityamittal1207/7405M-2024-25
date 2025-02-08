@@ -1790,8 +1790,8 @@ void newBotBlueRing(){
     raiseasdasd.set_value(false);
 
     //wallmotor.move(-127);
-    chassis.moveToPoint(0, 9.2, 700, {.forwards=true, .maxSpeed = 127});  
-    chassis.turnToHeading(4, 400, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 127}); 
+    chassis.moveToPoint(0, 9.5, 700, {.forwards=true, .maxSpeed = 127});  
+    chassis.turnToHeading(3, 400, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 127}); 
     wallmotor.move(100);
     pros::delay(500);
     wallmotor.move(-127);
@@ -1829,17 +1829,19 @@ void newBotBlueRing(){
     chassis.moveToPoint(17.8, -47.5, 800, {.forwards=true, .maxSpeed = 45});
     chassis.moveToPoint(17.6, -42.4, 500, {.forwards=false, .maxSpeed = 90});
     chassis.turnToHeading(-97, 600, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80}); 
-    chassis.moveToPoint(2.4, -43.9, 900, {.forwards=true, .maxSpeed = 45});
+    chassis.moveToPoint(3.4, -41.9, 900, {.forwards=true, .maxSpeed = 45});
     chassis.turnToHeading(-208, 800, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
-    chassis.moveToPoint(7.5, -55.5, 900, {.forwards=true, .maxSpeed = 127});
+    chassis.moveToPoint(9, -53.5, 900, {.forwards=true, .maxSpeed = 127});
 
     chassis.turnToHeading(-217, 500, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127}); 
 
     chassis.moveToPoint(-18, -32.1, 1000, {.forwards=false, .maxSpeed = 127});
 
-    chassis.turnToHeading(-92, 800, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 100}); 
+    chassis.turnToHeading(-92, 1000, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 70}); 
 
     chassis.moveToPoint(-35.6, -24.4, 800, {.forwards=true, .maxSpeed = 127});
+
+    chassis.moveToPoint(-18, -32.1, 1000, {.forwards=false, .maxSpeed = 127});
 
 
     //corner
