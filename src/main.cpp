@@ -274,7 +274,9 @@ void initialize() {
  * the VEX Competition Switch, following either autonomous or opcontrol. When
  * the robot is enabled, this task will exit.
  */
-void disabled() {}
+void disabled() {
+    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
+}
 
 /**
  * Runs after initialize(), and before autonomous when connected to the Field
@@ -1788,12 +1790,13 @@ void BlueRingC(){
     chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
     clamp.set_value(true);
     raiseasdasd.set_value(false);
-
     //wallmotor.move(-127);
-    chassis.moveToPoint(0, 9.5, 700, {.forwards=true, .maxSpeed = 127});  
-    chassis.turnToHeading(3, 400, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 127}); 
-    wallmotor.move(110);
-    pros::delay(400);
+    chassis.moveToPoint(0, 8, 700, {.forwards=true, .maxSpeed = 100});  
+    wallmotor.move(60);
+    chassis.turnToHeading(0, 400, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127});
+    // pros::delay(100);
+    pros::delay(127);
+    pros::delay(150);
     wallmotor.move(-127);
     pros::delay(100);
     wallmotor.move(0);
@@ -1807,7 +1810,9 @@ void BlueRingC(){
     intake.move(127);
     chassis.moveToPoint(11.7, 6.6, 700, {.forwards=true, .maxSpeed = 127});  
     wallmotor.move(-30);
-    pros::delay(800);
+    pros::delay(600);
+    raiseasdasd.set_value(false);
+    pros::delay(200);
     intake.move(0);
     chassis.turnToHeading(-16, 800, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
     wallmotor.move(0);
@@ -1832,18 +1837,19 @@ void BlueRingC(){
     chassis.moveToPoint(3.4, -41.9, 900, {.forwards=true, .maxSpeed = 55});
     intake.move(-127);
     chassis.turnToHeading(-208, 800, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
-    chassis.moveToPoint(9, -53.5, 900, {.forwards=true, .maxSpeed = 127});
+    pros::delay(200);
     intake.move(127);
+    chassis.moveToPoint(9, -53.5, 900, {.forwards=true, .maxSpeed = 127}, false);    intake.move(127);
 
     chassis.turnToHeading(-217, 500, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127}); 
 
     chassis.moveToPoint(-18, -32.1, 1000, {.forwards=false, .maxSpeed = 127});
 
-    chassis.turnToHeading(-92, 1000, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 70}); 
+    chassis.turnToHeading(-88, 500, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 90}); 
 
-    chassis.moveToPoint(-35.6, -24.4, 700, {.forwards=true, .maxSpeed = 127});
+    // chassis.moveToPoint(-35.6, -24.4, 700, {.forwards=true, .maxSpeed = 127});
 
-    chassis.moveToPoint(-18, -32.1, 1000, {.forwards=false, .maxSpeed = 127});
+    // chassis.moveToPoint(-18, -32.1, 1000, {.forwards=false, .maxSpeed = 127});
 
 
     //corner
@@ -1859,12 +1865,13 @@ void BlueRingL(){
     chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
     clamp.set_value(true);
     raiseasdasd.set_value(false);
-
     //wallmotor.move(-127);
-    chassis.moveToPoint(0, 9.5, 700, {.forwards=true, .maxSpeed = 127});  
-    chassis.turnToHeading(3, 400, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 127}); 
-    wallmotor.move(110);
-    pros::delay(400);
+    chassis.moveToPoint(0, 8, 700, {.forwards=true, .maxSpeed = 100});  
+    wallmotor.move(60);
+    chassis.turnToHeading(0, 400, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127});
+    // pros::delay(100);
+    pros::delay(127);
+    pros::delay(150);
     wallmotor.move(-127);
     pros::delay(100);
     wallmotor.move(0);
@@ -1878,7 +1885,9 @@ void BlueRingL(){
     intake.move(127);
     chassis.moveToPoint(11.7, 6.6, 700, {.forwards=true, .maxSpeed = 127});  
     wallmotor.move(-30);
-    pros::delay(800);
+    pros::delay(600);
+    raiseasdasd.set_value(false);
+    pros::delay(200);
     intake.move(0);
     chassis.turnToHeading(-16, 800, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
     wallmotor.move(0);
@@ -1919,7 +1928,7 @@ void BlueRingL(){
 
     wallmotor.move_velocity(0);
 
-    pros::delay(60);
+    pros::delay(180);
 
     move(0,0);
 
@@ -1936,12 +1945,13 @@ void RedMogo(){
     chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
     clamp.set_value(true);
     raiseasdasd.set_value(false);
-
     //wallmotor.move(-127);
-    chassis.moveToPoint(0, 9.5, 700, {.forwards=true, .maxSpeed = 127});  
-    chassis.turnToHeading(3, 400, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 127}); 
-    wallmotor.move(110);
-    pros::delay(400);
+    chassis.moveToPoint(0, 8, 700, {.forwards=true, .maxSpeed = 100});  
+    wallmotor.move(60);
+    chassis.turnToHeading(0, 400, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127});
+    // pros::delay(100);
+    pros::delay(127);
+    pros::delay(150);
     wallmotor.move(-127);
     pros::delay(100);
     wallmotor.move(0);
@@ -1955,9 +1965,11 @@ void RedMogo(){
     intake.move(127);
     chassis.moveToPoint(11.7, 6.6, 700, {.forwards=true, .maxSpeed = 127});  
     wallmotor.move(-30);
-    pros::delay(800);
+    pros::delay(600);
+    raiseasdasd.set_value(false);
+    pros::delay(200);
     intake.move(0);
-    chassis.turnToHeading(-16, 1000, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
+    chassis.turnToHeading(-16, 800, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
     wallmotor.move(0);
     raiseasdasd.set_value(false);
 
@@ -1966,19 +1978,19 @@ void RedMogo(){
     pros::delay(800);
     clamp.set_value(false);
     chassis.turnToHeading(-124, 800, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
-
-    intake.move(127);
     //pros::delay(10000);
     chassis.moveToPoint(2.5, -43, 900, {.forwards=true, .maxSpeed = 127});  
+    intake.move(127);
 
-    chassis.turnToHeading(-45.7, 700, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80}); 
+    chassis.turnToHeading(-45.7, 700, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80}, false);
+    
+    pros::delay(100);
 
     chassis.moveToPoint(-22.2, -19.7, 900, {.forwards=true, .maxSpeed = 127});  
+    intake.move(-127);
     chassis.turnToHeading(0, 700, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80}); 
 
     chassis.turnToHeading(-45.7, 700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
-
-    intake.move(-127);
 
     chassis.moveToPoint(-18.9, -23.1, 1100, {.forwards=false, .maxSpeed = 90});  
 
@@ -2186,6 +2198,7 @@ void autonomous() {
     hangs.set_value(false);
 
     // BlueRingC();
+    // BlueRingL();
     RedMogo();
 
     //skillsAuton();
