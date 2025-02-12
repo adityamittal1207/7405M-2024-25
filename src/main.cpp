@@ -1618,9 +1618,9 @@ void skillsAuton() {
     chassis.moveToPoint(46.7, 69.5, 800, {.forwards=false, .maxSpeed = 100});
     chassis.turnToHeading(90.63, 900, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60});
     chassis.moveToPoint(61, 63, 700, {.forwards=true, .maxSpeed = 100});
-    chassis.moveToPoint(46, 62, 700, {.forwards=false, .maxSpeed = 100}); 
-    chassis.turnToHeading(180, 700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60}); 
-    chassis.moveToPoint(49, 1, 4000, {.forwards=true, .maxSpeed = 60});  
+    chassis.moveToPoint(48, 62, 700, {.forwards=false, .maxSpeed = 100}); 
+    chassis.turnToHeading(185, 850, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60}); 
+    chassis.moveToPoint(49, 1, 4500, {.forwards=true, .maxSpeed = 40});  
     chassis.moveToPoint(43, 10, 1000, {.forwards=false, .maxSpeed = 100});  
     chassis.turnToHeading(320, 1500, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60}); 
     chassis.moveToPoint(58.7, -6.0, 1000, {.forwards=false, .maxSpeed = 100});  
@@ -1632,15 +1632,17 @@ void skillsAuton() {
     intake.move(127);
     chassis.moveToPoint(-25, 18, 1000, {.forwards=true, .maxSpeed = 50});
     chassis.turnToHeading(90, 1000, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 55});
-    chassis.moveToPoint(-32, 18, 2300, {.forwards=false, .maxSpeed = 100});
-    pros::delay(1500);
+    chassis.moveToPoint(-32, 18, 2400, {.forwards=false, .maxSpeed = 70});
+    pros::delay(1450);
     clamp.set_value(false);
+    intake.move(0);
 
     chassis.turnToHeading(367, 800, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 50});
     chassis.moveToPoint(-24, 35.3, 1000, {.forwards=true, .maxSpeed = 80});
 
     chassis.turnToHeading(337, 600, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 50});
     intake.move(127);
+    chassis.moveToPoint(-50, 70, 2500, {.forwards=true, .maxSpeed = 80});
     chassis.moveToPoint(-41, 92, 2500, {.forwards=true, .maxSpeed = 80});
     
     //cross auton line & get ring to store in lb
@@ -1947,32 +1949,30 @@ void RedMogo(){
     raiseasdasd.set_value(false);
     //wallmotor.move(-127);
     chassis.moveToPoint(0, 8, 700, {.forwards=true, .maxSpeed = 100});  
-    wallmotor.move(60);
-    chassis.turnToHeading(0, 400, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127});
+    wallmotor.move(80);
+    chassis.turnToHeading(1, 400, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127});
     // pros::delay(100);
     pros::delay(127);
     pros::delay(150);
     wallmotor.move(-127);
-    pros::delay(100);
+    pros::delay(400);
     wallmotor.move(0);
     chassis.moveToPoint(0, 0, 700, {.forwards=false, .maxSpeed = 127}, false);  
     wallmotor.move(-127);
     //pros::delay(1000);
 
     //turn towards ring in front of alliance stake, moves to get it, 
-    chassis.turnToHeading(68, 700, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 127}); 
+    chassis.turnToHeading(60, 700, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 127}); 
     raiseasdasd.set_value(true);
     intake.move(127);
-    chassis.moveToPoint(11.7, 6.6, 700, {.forwards=true, .maxSpeed = 127});  
+    chassis.moveToPoint(13.7, 4.6, 700, {.forwards=true, .maxSpeed = 127});  
     wallmotor.move(-30);
     pros::delay(600);
     raiseasdasd.set_value(false);
-    pros::delay(200);
+    pros::delay(400);
     intake.move(0);
     chassis.turnToHeading(-16, 800, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
     wallmotor.move(0);
-    raiseasdasd.set_value(false);
-
     //move to mogo to clamp, turn towards ring in front of center rings to intake 
     chassis.moveToPoint(15.9, -25, 1000, {.forwards=false, .maxSpeed = 80});  
     pros::delay(800);
@@ -1982,25 +1982,26 @@ void RedMogo(){
     chassis.moveToPoint(2.5, -43, 900, {.forwards=true, .maxSpeed = 127});  
     intake.move(127);
 
-    chassis.turnToHeading(-45.7, 700, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80}, false);
+    chassis.turnToHeading(-45.7, 890, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 40}, false);
     
-    pros::delay(100);
+    pros::delay(600);
 
-    chassis.moveToPoint(-22.2, -19.7, 900, {.forwards=true, .maxSpeed = 127});  
+    chassis.moveToPoint(-22.2, -19.7, 600, {.forwards=true, .maxSpeed = 127});  
     intake.move(-127);
     chassis.turnToHeading(0, 700, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80}); 
 
-    chassis.turnToHeading(-45.7, 700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
 
-    chassis.moveToPoint(-18.9, -23.1, 1100, {.forwards=false, .maxSpeed = 90});  
+    chassis.moveToPoint(-17.8, -30.7, 1100, {.forwards=false, .maxSpeed = 90});  
 
-    chassis.turnToHeading(-93, 700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
+    chassis.turnToHeading(-85, 700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
 
-    chassis.moveToPoint(-38, -24.7, 800, {.forwards=true, .maxSpeed = 100});  
+    chassis.moveToPoint(-43, -29.7, 800, {.forwards=true, .maxSpeed = 100});  
 
     intake.move(127);
+    pros::delay(800);
+    move(0.4f, 0.0f);
 
-    chassis.moveToPoint(37, -23.8, 1000, {.forwards=false, .maxSpeed = 127});
+    chassis.moveToPoint(33.8, -25.5, 2000, {.forwards=false, .maxSpeed = 80});
 
     wallmotor.move(127);
 
@@ -2184,6 +2185,7 @@ void redRingNoFourth()
 
 void autonomous() {
 
+    pros::delay(20);
     autonRunning = BLUE_RING;
 
     doinker.set_value(false);
@@ -2199,32 +2201,10 @@ void autonomous() {
 
     // BlueRingC();
     // BlueRingL();
-    RedMogo();
+    //RedMogo();
 
-    //skillsAuton();
-    //newBotBlueRing();    
-        //newBotRedRing();
-    
-        // newBotBlueMogo();
+    skillsAuton();
 
-        // newBotRedMogo();
-
-        //skillsAuton();
-    // newBotBlueRing();
-    // wallmotor.move(-50);
-    // wallrot.set_position(0);
-    // newBotBlueMogo();
-
-    //turnAuton();
-    // bluRingG();
-    // redRingG();
-    // redRingA();
-    // redRingG();
-    // redMogoG();
-    //bluMogoG();
-    // skillsAuton();
-    // redRingAuton123();
-    // bluRingA();
 
 
     // drivetrain.
