@@ -81,7 +81,7 @@ bin/main.cpp.o: src/main.cpp include/main.h include/api.h \
  include/lemlib/chassis/trackingWheel.hpp include/pros/adi.hpp \
  include/pros/rotation.hpp include/lemlib/pose.hpp include/lemlib/pid.hpp \
  include/lemlib/exitcondition.hpp include/lemlib/driveCurve.hpp \
- src/subsystems/Intake.h src/subsystems/Ladybrown.h
+ src/subsystems/Intake.h src/subsystems/Ladybrown.h include/./api.h
 include/main.h:
 include/api.h:
 include/pros/adi.h:
@@ -248,3 +248,4 @@ include/lemlib/exitcondition.hpp:
 include/lemlib/driveCurve.hpp:
 src/subsystems/Intake.h:
 src/subsystems/Ladybrown.h:
+include/./api.h:

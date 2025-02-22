@@ -5,6 +5,7 @@
 #include "pros/misc.h"
 #include "pros/motors.h"
 #include "pros/rtos.hpp"
+#include <atomic>
 #include <cstdio>
 
 #include "subsystems/Intake.h"
@@ -52,7 +53,7 @@ pros::Motor intake2(0);
 
 Intake intake_class;
 
-// pros::Motor wallmotor(8);
+pros::Motor wallmotor(8);
 
 Ladybrown ladybrown_class;
 
@@ -85,7 +86,7 @@ lemlib::Drivetrain drivetrain {
 SENSORS
 */
 
-// pros::Rotation wallrot(19, false); 
+pros::Rotation wallrot(19, false); 
 
 pros::Rotation horizontal_rot(10); // port 1, not reversed
 pros::Rotation vertical_rot(9); // port 1, not reversed
@@ -169,9 +170,10 @@ INTAKE THREAD
 void intake_thread(){
     while(true){
     // printf("%f \n",intake.get_torque());
-    intake_class.update(intake.get_torque());
-    intake.move(intake_class.get_velocity());
-    pros::delay(10);
+        intake_class.update(intake.get_torque());
+        printf("Intake velocity: %f \n", intake_class.get_velocity());
+        intake.move(intake_class.get_velocity());
+        pros::delay(10);
     }
 }
 
@@ -179,13 +181,24 @@ void intake_thread(){
 LADYBROWN THREAD
 */
 
+#define targetWait 34
+#define targetTop 164
+#define targetDown 210
+#define targetHold 70
+
+// bool ladybrown_manual = false;
+std::atomic_bool ladybrown_manual(false);
+
 void Ladybrown_thread(){
     while(true){
-    ladybrown_class.update(wallrot.get_position());
-    wallmotor.move(ladybrown_class.get_velocity());
-    pros::delay(10);
+        ladybrown_class.update(wallrot.get_position());
+        if (!ladybrown_manual.load()){
+            wallmotor.move(ladybrown_class.get_velocity());
+        }
+        pros::delay(10);
     }
 }
+
 
 /*
 SCREEN THREAD
@@ -289,11 +302,12 @@ void disabled() {
 void competition_initialize() {}
 
 void skillsAutonWallStakes() {
+    ladybrown_manual.store(true);
     chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
     clamp.set_value(true);
-    intake.move(127);
+    intake_class.set_velocity(127);
     pros::delay(700);
-    intake.move(0);
+    intake_class.set_velocity(0);
     pros::delay(200);
     chassis.moveToPoint(0, 12, 500, {.forwards=true, .maxSpeed = 80});
     chassis.turnToHeading(-89, 550, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 55});
@@ -302,7 +316,7 @@ void skillsAutonWallStakes() {
     clamp.set_value(false);
     chassis.turnToHeading(7, 600, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 50});
     chassis.moveToPoint(24.7, 38.1, 800, {.forwards=true, .maxSpeed = 80});
-    intake.move(127);
+    intake_class.set_velocity(127);
     //cross auton line & get ring to store in lb
     //go to auton line & turn towards wall stake while intaking ring
     //score wall stake
@@ -311,34 +325,54 @@ void skillsAutonWallStakes() {
     chassis.turnToHeading(6, 500, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60});
     chassis.moveToPoint(50, 88, 850, {.forwards=true, .maxSpeed = 100});
     chassis.turnToHeading(14.3, 500, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60});
-    chassis.moveToPoint(43.2, 63.5, 800, {.forwards=false, .maxSpeed = 80}, false);
-    int tmt = 0;
-    while(tmt < 200000){
-        tmt += fabsf(wallrot.get_position()/100.0f - 36) < 3;
-        wallmotor.move((wallrot.get_position()/100.0f - 36) * -3);
-        ++tmt;
-    }
+    intake_class.maxTorque = 0.50;
+
+    // pros::delay(942949249294294424);
+    chassis.moveToPoint(43, 65, 1200, {.forwards=false, .maxSpeed = 80}, false);
+    ladybrown_manual.store(false);
+    ladybrown_class.set_angle(targetWait);
     wallmotor.move_velocity(0);
     chassis.turnToHeading(90, 900, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60});
-    chassis.moveToPoint(62.8, 61, 700, {.forwards=true, .maxSpeed = 70}, false);
-    intake.move(0);
-    pros::delay(1000);
+    chassis.moveToPoint(60.3, 64.6, 1500, {.forwards=true, .maxSpeed = 60}, false);
+
+    // pros::delay(2949249292499294294294242424);
+
+    
+    pros::delay(400);
+    intake_class.set_velocity(0);
+    pros::delay(450);
+    ladybrown_manual.store(true);
     wallmotor.move(127);
     intake.move(0);
     pros::delay(870);
-    chassis.moveToPoint(48, 62, 700, {.forwards=false, .maxSpeed = 100}, false);
-    wallmotor.move(-100);
+    wallmotor.move(-127);
+    chassis.moveToPoint(46.6, 64.6, 700, {.forwards=false, .maxSpeed = 100}, false);
+    intake_class.maxTorque = 0.35;
     pros::delay(900); 
-    chassis.turnToHeading(185, 850, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60}); 
-    chassis.moveToPoint(52, 1, 4500, {.forwards=true, .maxSpeed = 40});  
-    chassis.moveToPoint(43, 10, 700, {.forwards=false, .maxSpeed = 100});  
-    chassis.turnToHeading(320, 750, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60}); 
-    chassis.moveToPoint(58.7, -6.0, 1000, {.forwards=false, .maxSpeed = 100});  
+    wallmotor.move(0);
+    // pros::delay(492944924924922424);
+    intake_class.set_velocity(127);
+    chassis.turnToHeading(181, 850, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60}); 
+
+    // pros::delay(949249492949424);
+
+    chassis.moveToPoint(46, 2.8, 4500, {.forwards=true, .maxSpeed = 40});  
+
+    chassis.turnToHeading(57, 850, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60}); 
+    
+    chassis.moveToPoint(60, 13.4, 700, {.forwards=true, .maxSpeed = 60});  
+
+    // pros::delay(294429494249424242424);
+    
+    chassis.turnToHeading(-19, 750, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60}); 
+    chassis.moveToPoint(63.3, 4.6, 1000, {.forwards=false, .maxSpeed = 100});  
     pros::delay(300);
-    intake.move(-50);
+    intake_class.set_velocity(-50);
     clamp.set_value(true);
 
     pros::delay(300);
+
+    // pros::delay(4924922494942424);
     intake.move(127);
     chassis.moveToPoint(-25, 23, 1000, {.forwards=true, .maxSpeed = 50});
     chassis.turnToHeading(90, 1000, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 55});
@@ -364,6 +398,8 @@ void skillsAutonWallStakes() {
     chassis.turnToHeading(0, 600, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80});
 
     chassis.moveToPoint(-50.3, 81.9, 1000, {.forwards=true, .maxSpeed = 50});
+
+    pros::delay(29492492492942492949242424);
 
 
     
@@ -1225,6 +1261,9 @@ void autonomous() {
 
     // clamp.set_value(true);
 
+    // skillsAutonNoWallStakes();
+    skillsAutonWallStakes();
+
     // intake_class.set_velocity(127);
 
     // pros::delay(5000);
@@ -1261,15 +1300,10 @@ void autonomous() {
     // pros::Task my_cpp_task (my_task);
 }
 
-#define targetWait 34
-#define targetTop 164
-#define targetDown 210
-#define targetHold 70
-
 void opcontrol() {
 
     // pros::delay(50);
-    wallrot.set_position(0);
+    // wallrot.set_position(0);
     bool doinker_state = false;
     bool doinker_button = false;
     doinker.set_value(false);
@@ -1281,12 +1315,24 @@ void opcontrol() {
     right_back_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     right_center_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     wallmotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-    
     // wallstage = 4;
+    int timer = 0;
     int pos = 0;
+    float pwall, iwall, dwall;
+    pwall = 0.02f;
+    iwall = 0.0f;
+    dwall = 0.002f;
+    float threshold = 5.0f;
     bool clamped2 = false;
+    float preverr = 0.0f;
+    float sumerrorwall = 0.0f;
     float targetpos = targetWait;
+    float err;
     int stage = 0;
+    bool lastCycle = false;
+
+    // wallrot.set_position(1);
+
     wallmotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     bool manual = false;
 
@@ -1304,13 +1350,63 @@ void opcontrol() {
         bool wallreturn = master.get_digital_new_press(DIGITAL_L2);
         bool wallMid = master.get_digital_new_press(DIGITAL_B);
         bool wallDown = master.get_digital_new_press(DIGITAL_DOWN);
-
+        
+        pos = wallrot.get_position()/100.0f;
+        err = targetpos - pos;
+        float derr = err-preverr;
+        sumerrorwall += err;
+        float ret = pwall * err + iwall * sumerrorwall + dwall * derr;
         if(manual){goto skp;}
+        // wallmotor.move((ret * 127) > 127 ? 127 : (ret*127));
+        // bool yesredirect = master.get_digital(DIGITAL_L1);
+        // bool notredirect = master.get_digital(DIGITAL_L2);
 
-        ladybrown_class.set_angle(targetpos);
+        
+        if(wallcycler && !lastCycle){
+            if(stage == 4){
+                stage = 2;
+            goto skprest;
+            }
+            stage = ((stage <= 1) ? stage+1 : 1);
+            skprest:
+            if(stage == 2){
+                intaking = false;
+                outtaking = false;
+                intake_class.set_velocity(-127);
+                pros::delay(50);
+                intake_class.set_velocity(0);
+            }
+        }
+        
+        if(wallDown) {
+            stage = (stage != 3) ? 3 : 0;
+            sumerrorwall = 0.0f;
+        }
+        if(wallMid) {
+            stage = (stage != 4) ? 4 : 0;
+            sumerrorwall = 0.0f;
+            intaking = false;
+            outtaking = false;
+            intake_class.set_velocity(-127);
+            pros::delay(50);
+            intake_class.set_velocity(0);
+        }
+        if(wallcycler || wallreturn){
+            sumerrorwall = 0.0f;
+        }
+        if(wallreturn){
+            sumerrorwall = 0.0f;
+            stage = 0;
+        }
+        // if(fabs(wallrot.get_angle() % 360) < 3.0f){
+        //     wallrot.set_position(0);
+        // }
+
+        
 
         targetpos = (stage == 1) * targetWait + (stage == 2) * targetTop + (stage == 3) * targetDown + (stage == 4) * targetHold;
         
+        ladybrown_class.set_angle(targetpos);
         goto skp2;
         
         skp:;
@@ -1357,6 +1453,12 @@ void opcontrol() {
             outtaking = !outtaking;
         }
 
+        if (stage == 1){
+            intake_class.maxTorque = 0.5;
+        }
+        else {
+            intake_class.maxTorque = 0.35;
+        }
         if (outtaking){
             intake_class.set_velocity(127);
             intake2.move(127);
