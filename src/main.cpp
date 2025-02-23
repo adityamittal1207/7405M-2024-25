@@ -1095,9 +1095,9 @@ void RedMogoELIM(){
 
     // pros::delay(9394329432493249324923424324324);
 
-    chassis.moveToPoint(-15, -31, 1000, {.forwards=false, .maxSpeed = 50}, false); 
+    chassis.moveToPoint(-15, -31, 700, {.forwards=false, .maxSpeed = 100}, false); 
 
-    chassis.turnToHeading(-228, 700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 40});
+    chassis.turnToHeading(-228, 1700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 40});
 
     pros::delay(700);
 
