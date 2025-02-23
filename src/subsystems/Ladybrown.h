@@ -18,11 +18,12 @@ class Ladybrown{
     void set_angle(double _target_angle) {
         target_angle = _target_angle;
     }
-    double get_velocity();
+    double get_velocity(bool isDown = false);
 
     void update(double _cur_angle) {
         prev_angle = cur_angle;
         cur_angle = _cur_angle/100.0f;}
+
 
     // void reset();
  };
