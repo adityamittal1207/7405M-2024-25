@@ -181,7 +181,7 @@ void intake_thread(){
 LADYBROWN THREAD
 */
 
-#define targetWait 36
+#define targetWait 33
 #define targetTop 164
 #define targetDown 210
 #define targetHold 70
@@ -1091,33 +1091,32 @@ void RedMogoELIM(){
     chassis.moveToPoint(-43, -29.7, 800, {.forwards=true, .maxSpeed = 100});  
 
     intake_class.set_velocity(127);
-    pros::delay(800);
+    pros::delay(900);
 
     // pros::delay(9394329432493249324923424324324);
 
     chassis.moveToPoint(-15, -31, 700, {.forwards=false, .maxSpeed = 100}, false); 
 
-    chassis.turnToHeading(-228, 1700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 40});
+    chassis.turnToHeading(-215, 1200, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 45});
 
     pros::delay(700);
 
     clamp.set_value(true); 
 
-    // pros::delay(200);
 
-    move(60, 0);
+    pros::delay(500);
 
-    pros::delay(100);
+    move(55, 0);
+
+    pros::delay(420);
 
     move(0,0);
 
     // chassis.moveToPoint(1.9, -44.2 , 700, {.forwards=true, .maxSpeed = 100}); 
 
-    chassis.turnToHeading(-402, 1100, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 70});
+    chassis.turnToHeading(-407, 1100, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 70});
 
     pros::delay(100);
-
-    doinker.set_value(false);
 
     // angle: 
 
@@ -1141,12 +1140,12 @@ void BlueMogoELIM(){
     raiseasdasd.set_value(false);
     //wallmotor.move(-127);
     chassis.moveToPoint(0, 7.4, 800, {.forwards=true, .maxSpeed = 100});  
-    wallmotor.move(80);
-    // chassis.turnToHeading(5, 700, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 127});
+    wallmotor.move(90);
+    // chassis.turnToHeading(-5, 700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127});
     pros::delay(250);
-    pros::delay(160);
-    wallmotor.move(40);
-    pros::delay(200);
+    pros::delay(170);
+    wallmotor.move(45);
+    pros::delay(230);
     wallmotor.move(-40);
     pros::delay(100);
     wallmotor.move(0);
@@ -1161,13 +1160,12 @@ void BlueMogoELIM(){
     raiseasdasd.set_value(true);
 
     // pros::delay(9329432943294932943243);
-    intake_class.set_velocity(110);
+    intake_class.set_velocity(127);
     chassis.moveToPoint(-10.1, 7.3, 700, {.forwards=true, .maxSpeed = 90});  
     wallmotor.move(-30);
-    pros::delay(400);
-    intake_class.set_velocity(50);
+    pros::delay(700);
     raiseasdasd.set_value(false);
-    pros::delay(600);
+    pros::delay(300);
     intake_class.set_velocity(0);
     chassis.turnToHeading(16, 800, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 70}); 
     wallmotor.move(0);
@@ -1186,43 +1184,42 @@ void BlueMogoELIM(){
 
     chassis.moveToPoint(22.2, -19.7, 600, {.forwards=true, .maxSpeed = 127});  
     intake_class.set_velocity(-127);
-    chassis.turnToHeading(0, 700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
+    chassis.turnToHeading(0, 60, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 65}); 
 
 
-    chassis.moveToPoint(17.8, -30.7, 1100, {.forwards=false, .maxSpeed = 90});  
+    chassis.moveToPoint(17.8, -30.7, 600, {.forwards=false, .maxSpeed = 90});  
 
-    chassis.turnToHeading(85, 700, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80}); 
+    chassis.turnToHeading(85, 600, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80}); 
 
     chassis.moveToPoint(43, -29.7, 800, {.forwards=true, .maxSpeed = 100});  
 
     intake_class.set_velocity(127);
-    pros::delay(800);
+    pros::delay(900);
 
     // pros::delay(9394329432493249324923424324324);
 
     chassis.moveToPoint(15, -31, 700, {.forwards=false, .maxSpeed = 100}, false); 
 
-    pros::delay(500);
+    chassis.turnToHeading(228, 1200, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 45});
 
-    // doinker.set_value(true); 
- 
-    chassis.turnToHeading(228, 700, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 127});
-
-    pros::delay(500);
+    pros::delay(700);
 
     clamp.set_value(true); 
 
-    pros::delay(200);
 
-    move(30, 0);
+    pros::delay(500);
 
-    pros::delay(200);
+    move(55, 0);
+
+    pros::delay(420);
 
     move(0,0);
 
-    // chassis.moveToPoint(-1.9, -44.2 , 700, {.forwards=true, .maxSpeed = 100}); 
+    // chassis.moveToPoint(1.9, -44.2 , 700, {.forwards=true, .maxSpeed = 100}); 
 
-    chassis.turnToHeading(402, 700, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 127});
+    chassis.turnToHeading(407, 1100, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 70});
+
+    pros::delay(100);
 
     // angle: 
 
@@ -1230,7 +1227,7 @@ void BlueMogoELIM(){
 
     // // chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
 
-    // chassis.moveToPoint(-33.8, -25.5, 2000, {.forwards=false, .maxSpeed = 75});
+    // chassis.moveToPoint(33.8, -25.5, 2000, {.forwards=false, .maxSpeed = 75});
 
     // wallmotor.move(127);
 
@@ -1269,7 +1266,8 @@ void autonomous() {
     // BlueRingL();
     // RedRingL();
     // RedMogo();
-    RedMogoELIM();
+    // RedMogoELIM();
+    BlueMogoELIM();
 
     // skillsAuton();
     // RedMogoDoink();
@@ -1313,6 +1311,13 @@ void autonomous() {
     // pros::task_t my_task = task_create(pidUpdate, (void*)"PROS", TASK_PRIORITY_DEFAULT,
     //                            TASK_STACK_DEPTH_DEFAULT, "My Task");
     // pros::Task my_cpp_task (my_task);
+}
+
+void newDrive() {
+    //left joystick - forward and back
+    //right joystick - left and right
+    //check what the voltage is and output
+
 }
 
 void opcontrol() {
@@ -1404,9 +1409,18 @@ void opcontrol() {
         }
         
         if(wallDown) {
-            moveDown = false;
+            intake.move(0);
+            intaking = false;
+            outtaking = false;
+            chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
+            move(-70, 0);
+            pros::delay(170);
+            move(0, 0);
+            pros::delay(100);
+            chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
+            //moveDown = false;
             if(stage != 3){
-                moveDown = true;
+                //moveDown = true;
             }
             stage = (stage != 3) ? 3 : 0;
             sumerrorwall = 0.0f;
@@ -1453,13 +1467,11 @@ void opcontrol() {
             clamped2 = !clamped2;
             clamp.set_value(clamped2);
             if(clamped2){
-                intaking = false; outtaking = false;
+                intaking = true; outtaking = false;
             }
         }
 
         if(master.get_digital_new_press(DIGITAL_UP)){
-            raised = !raised;
-            raiseasdasd.set_value(raised);
         }
 
         if(doinker_button){
@@ -1467,9 +1479,9 @@ void opcontrol() {
             doinker.set_value(doinker_state);
         }        
 
-        if (!clamped2){
-            master.set_text(3, 0, ".");
-        }
+        // if (!clamped2){
+        //     master.set_text(3, 0, ".");
+        // }
         else{
             master.set_text(3, 0, "");
         }
