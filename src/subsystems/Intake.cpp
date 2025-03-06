@@ -2,42 +2,37 @@
 
 Intake::Intake() {}
 
-double Intake::get_velocity(){
-
-    // printf("counter1: %i counter2: %i\n", counter, counter2);
-
-    if(counter > 15)
-    {
-        jammed = true;
-    }
-
-    if (counter2 > 10){
-        jammed = false;
-        counter2 = 0;
-    }
-
-    if (jammed){
-        counter2++;
-        return -127;
-    }
-
-    return(target_velocity);
-}
-
 void Intake::update(double torque){
-    if(torque > maxTorque)
-    {
-        truTorque = true;
+    if(torque > maxTorque){
+        detect_jam_counter++;
     }
     else {
-    {
-        truTorque = false;
-        counter = 0;
+        detect_jam_counter = 0;
     }
-    }
-    if(truTorque == true)
-    {
-        counter++;
-    }
-
 }
+
+
+double Intake::get_velocity(){
+
+    jammed = detect_jam_counter > 22.5;
+
+    // if(releasedMogo){
+    //     --releasedMogo;
+    //     return -127.0;
+    // }
+
+    // if (outtake_duration_counter > 0){
+    //     jammed = false;
+    //     outtake_duration_counter = 0;
+    // }
+
+    // if (jammed){
+    //     outtake_duration_counter++;
+    //     return -127.0;
+    // }
+
+    return target_velocity;
+}
+
+
+

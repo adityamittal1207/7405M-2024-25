@@ -2,9 +2,6 @@
 
 #include "./api.h"
 
-
-
-
 class Ladybrown{
     private:
         double target_angle;
@@ -13,7 +10,6 @@ class Ladybrown{
         bool checker = false;
 
     public:
-
     Ladybrown();
 
     void set_angle(double _target_angle) {
@@ -25,7 +21,8 @@ class Ladybrown{
     void update(double _cur_angle) {
         prev_angle = cur_angle;
         cur_angle = _cur_angle/100.0f;}
-
-
-    // void reset();
  };
+
+
+
+
