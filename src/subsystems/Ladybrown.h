@@ -10,6 +10,7 @@ class Ladybrown{
         double target_angle;
         double cur_angle;
         double prev_angle;
+        bool checker = false;
 
     public:
 
@@ -19,6 +20,7 @@ class Ladybrown{
         target_angle = _target_angle;
     }
     double get_velocity(bool isDown = false);
+    bool waitUntilDone();
 
     void update(double _cur_angle) {
         prev_angle = cur_angle;
