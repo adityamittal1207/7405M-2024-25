@@ -7,9 +7,12 @@ class Intake{
         int detect_jam_counter;
         int outtake_duration_counter;
         bool jammed;
+
+        
         
 
     public:
+    int releasedMogo = 0;
     double maxTorque = .35f;
     Intake();
 

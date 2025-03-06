@@ -14,17 +14,22 @@ void Intake::update(double torque){
 
 double Intake::get_velocity(){
 
-    jammed = detect_jam_counter > 15;
+    jammed = detect_jam_counter > 22.5;
 
-    if (outtake_duration_counter > 20){
-        jammed = false;
-        outtake_duration_counter = 0;
-    }
+    // if(releasedMogo){
+    //     --releasedMogo;
+    //     return -127.0;
+    // }
 
-    if (jammed){
-        outtake_duration_counter++;
-        return -127.0;
-    }
+    // if (outtake_duration_counter > 0){
+    //     jammed = false;
+    //     outtake_duration_counter = 0;
+    // }
+
+    // if (jammed){
+    //     outtake_duration_counter++;
+    //     return -127.0;
+    // }
 
     return target_velocity;
 }
