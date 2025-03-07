@@ -183,10 +183,10 @@ void intake_thread(){
 LADYBROWN THREAD
 */
 
-#define targetWait 32
-#define targetTop 164
-#define targetDown 210
-#define targetHold 54
+#define targetWait 31
+#define targetTop 163
+#define targetDown 209
+#define targetHold 53
 bool moveDown = false;
 
 // bool ladybrown_manual = false;
@@ -547,12 +547,12 @@ void skillsAutonStatesWallStakes() {
     chassis.turnToHeading(182, 600, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80}); 
     
     //move forward into 3 rings, get diagonal ring, turn, and drop mogo 
-    chassis.moveToPoint(51, 2.6, 1250, {.forwards=true, .maxSpeed = 60}); 
-    chassis.moveToPoint(51, 2.6, 930, {.forwards=true, .maxSpeed = 40}); 
+    chassis.moveToPoint(52, 2.6, 1250, {.forwards=true, .maxSpeed = 60}); 
+    chassis.moveToPoint(52, 2.6, 930, {.forwards=true, .maxSpeed = 40}); 
     chassis.turnToHeading(50, 700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 65}); 
-    chassis.moveToPoint(59, 14, 700, {.forwards=true, .maxSpeed = 70}); 
+    chassis.moveToPoint(60, 11.5, 700, {.forwards=true, .maxSpeed = 70}); 
     chassis.turnToHeading(320, 750, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60}); 
-    chassis.moveToPoint(61, 2.1, 700, {.forwards=false, .maxSpeed = 127});  
+    chassis.moveToPoint(67, 2.1, 700, {.forwards=false, .maxSpeed = 127});  
     pros::delay(300);
     intake_class.set_velocity(-50);
     //unclamp mogo in corner
@@ -566,8 +566,8 @@ void skillsAutonStatesWallStakes() {
     chassis.moveToPoint(-25, 23, 1000, {.forwards=true, .maxSpeed = 100});
     chassis.turnToHeading(90, 800, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80});
     intake_class.set_velocity(0);
-    chassis.moveToPoint(-25, 11, 1300, {.forwards=false, .maxSpeed = 75});
-    pros::delay(1000);
+    chassis.moveToPoint(-26, 14, 1500, {.forwards=false, .maxSpeed = 76});
+    pros::delay(930);
     clamp.set_value(false);
     intake_class.set_velocity(127);
 
@@ -579,7 +579,7 @@ void skillsAutonStatesWallStakes() {
     
     //turn towards ring in front of wall stake & intake, move to ring across auton line
     chassis.turnToHeading(-41, 700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 50});
-    chassis.moveToPoint(-47.8, 65, 1150, {.forwards=true, .maxSpeed = 80});
+    chassis.moveToPoint(-38.5, 63.5, 1150, {.forwards=true, .maxSpeed = 80});
     // chassis.moveToPoint(-51, 59.3, 1000, {.forwards=false, .maxSpeed = 80});
 
     ladybrown_manual.store(false);
@@ -588,11 +588,11 @@ void skillsAutonStatesWallStakes() {
     intake_class.maxTorque = 0.5;
 
     chassis.turnToHeading(-85, 600, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80});
-    chassis.moveToPoint(-65, 65, 800, {.forwards=true, .maxSpeed = 70}, false);
+    chassis.moveToPoint(-65, 64.75, 800, {.forwards=true, .maxSpeed = 70}, false);
 
-    move(40, 0);
+    move(60, 0);
 
-    pros::delay(400);
+    pros::delay(500);
     intake_class.set_velocity(0);
     pros::delay(200);
     ladybrown_class.set_angle(targetDownSkills);
@@ -611,13 +611,13 @@ void skillsAutonStatesWallStakes() {
 
     chassis.turnToHeading(180, 800, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80});
 
-    chassis.moveToPoint(-54, 3.1, 600, {.forwards=true, .maxSpeed = 100});
+    chassis.moveToPoint(-50.5, 3.1, 600, {.forwards=true, .maxSpeed = 110});
 
-    chassis.moveToPoint(-54, 3.1, 1800, {.forwards=true, .maxSpeed = 60});
+    chassis.moveToPoint(-50.5, 1.3, 2000, {.forwards=true, .maxSpeed = 50});
 
     chassis.turnToHeading(-51, 1000, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 50});
 
-    chassis.moveToPoint(-61, 12, 800, {.forwards=true, .maxSpeed = 80});
+    chassis.moveToPoint(-57, 1.3, 950, {.forwards=true, .maxSpeed = 80});
 
     chassis.turnToHeading(34, 900, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 100});
 
@@ -643,19 +643,23 @@ void skillsAutonStatesWallStakes() {
 
     chassis.moveToPoint(-23, 89.6, 900, {.forwards=true, .maxSpeed = 80});
 
-    chassis.turnToHeading(-134, 1000, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 70});
-    
-    chassis.moveToPoint(7, 111, 600, {.forwards=false, .maxSpeed = 60});
+    chassis.turnToHeading(220, 1000, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 70});
 
-    pros::delay(450);
+    // pros::delay(294294294249424242424242);
+    
+    chassis.moveToPoint(0, 114.3, 1000, {.forwards=false, .maxSpeed = 70});
+
+    pros::delay(675);
+
+    // pros::delay(20420404204204204204242424);
 
     clamp.set_value(false);
 
-    chassis.moveToPoint(0, 107, 400, {.forwards=true, .maxSpeed = 60});
+    // chassis.moveToPoint(-3, 107, 400, {.forwards=true, .maxSpeed = 60});
 
     chassis.turnToHeading(0, 1000, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 70});
 
-    chassis.moveToPoint(0, 126.4, 1000, {.forwards=true, .maxSpeed = 60}, false);
+    chassis.moveToPoint(0, 128, 1000, {.forwards=true, .maxSpeed = 60}, false);
 
     intake_class.set_velocity(0);
 
@@ -663,7 +667,7 @@ void skillsAutonStatesWallStakes() {
 
     pros::delay(300);
 
-    move(-70, 0);
+    move(-80, 0);
 
     pros::delay(220);
 
@@ -671,7 +675,7 @@ void skillsAutonStatesWallStakes() {
 
     pros::delay(200);
 
-    ladybrown_class.set_angle(180);
+    ladybrown_class.set_angle(205);
 
     // chassis.moveToPoint()
 
@@ -1593,7 +1597,7 @@ void opcontrol() {
     intake_class.maxTorque=0.5;
 
 	while (true) {
-        int power = master.get_analog(ANALOG_LEFT_Y) * 0.85f;
+        int power = master.get_analog(ANALOG_LEFT_Y);
         int turn = master.get_analog(ANALOG_RIGHT_X);
         bool manualswitch = false;
         if(manualswitch){
@@ -1609,7 +1613,7 @@ void opcontrol() {
         bool returnLB = master.get_digital_new_press(DIGITAL_RIGHT);
         bool rightBack = master.get_digital(DIGITAL_R2);
 
-        power *= rightBack ? 1 : 0.6;
+        power *= rightBack ? 0.7 : 1;
 
         if(returnLB){
             ladybrown_manual = true;
