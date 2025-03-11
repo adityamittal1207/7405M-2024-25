@@ -1709,7 +1709,7 @@ void opcontrol() {
         //     autoclamp_bool = !autoclamp_bool;
         // }
 
-        power *= rightBack ? 1 : 0.6;
+        //power *= rightBack ? 1 : 0.6;
 
         if(returnLB){
             ladybrown_manual = true;
@@ -1828,7 +1828,7 @@ void opcontrol() {
             master.set_text(3, 0, "");
         }
         
-        chassis.arcade(power, turn);
+        //chassis.arcade(power, turn);
 
         if (intakebutton){
             outtaking = false;
