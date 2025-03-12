@@ -625,34 +625,38 @@ void skillsAutonStatesWallStakes() {
 
     //move forward from corner, turn towards other side mogo, move to mogo, & clamp
     intake_class.set_velocity(127);
+
     chassis.moveToPoint(-25, 18, 1000, {.forwards=true, .maxSpeed = 100});
+
     chassis.turnToHeading(93.5, 1000, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80});
+
     intake_class.set_velocity(0);
+
     chassis.moveToPoint(-30, 14.5, 1300, {.forwards=false, .maxSpeed = 70});
+
     autoclamp_bool = true;
-    // pros::delay(1330);
-    // clamp.set_value(false);
+
     intake_class.set_velocity(127);
 
-    //turn towards ring in front of ladder, move to & intake
+    //turn towards ring in front of ladder, move to & intake 
     chassis.turnToHeading(367, 800, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 50});
-    autoclamp_bool = false;
-    chassis.moveToPoint(-26, 35.3, 1000, {.forwards=true, .maxSpeed = 80});
-
-    // pros::delay(5454545454545545);
     
-    //turn towards ring in front of wall stake & intake, move to ring across auton line
+    autoclamp_bool = false;
+    
+    chassis.moveToPoint(-26, 35.3, 1000, {.forwards=true, .maxSpeed = 80});
+    
+    //turn towards ring, move towards in front of wall stake & intake, move to ring across auton line
     chassis.turnToHeading(-41, 700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 50});
+    
     chassis.moveToPoint(-45, 66.5, 2000, {.forwards=true, .maxSpeed = 80});
 
-    // pros::delay(4567887654245678);
-    // chassis.moveToPoint(-51, 59.3, 1000, {.forwards=false, .maxSpeed = 80});
-
     ladybrown_manual.store(false);
+    
     ladybrown_class.set_angle(targetWait);
 
     intake_class.maxTorque = 0.5;
 
+    //
     chassis.turnToHeading(-85, 1000, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80});
 
     intake_class.set_velocity(0);
@@ -664,7 +668,6 @@ void skillsAutonStatesWallStakes() {
     intake_class.set_velocity(127);
 
     pros::delay(700);
-
 
     getPose();
 
