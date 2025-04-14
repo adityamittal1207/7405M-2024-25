@@ -35,12 +35,14 @@ const char* autonNames[] = {"RED RING", "RED_MOGO", "BLUE_RING", "BLUE_MOGO"};
 DRIVE MOTORS
 */
 
-pros::Motor left_front_motor(1, pros::E_MOTOR_GEAR_BLUE, true);
-pros::Motor left_center_motor(2, pros::E_MOTOR_GEAR_BLUE	, false);
-pros::Motor left_back_motor(3, pros::E_MOTOR_GEAR_BLUE	, true);    
-pros::Motor right_front_motor(4, pros::E_MOTOR_GEAR_BLUE	, false);
-pros::Motor right_center_motor(5, pros::E_MOTOR_GEAR_BLUE	, true);
-pros::Motor right_back_motor(6, pros::E_MOTOR_GEAR_BLUE	, false);
+pros::Motor left_front_motor(6, pros::E_MOTOR_GEAR_BLUE, false);
+pros::Motor left_center_motor(12, pros::E_MOTOR_GEAR_BLUE	, false);
+pros::Motor left_back_motor(13, pros::E_MOTOR_GEAR_BLUE	, false);    
+pros::Motor right_front_motor(1, pros::E_MOTOR_GEAR_BLUE	, true);
+pros::Motor right_center_motor(2, pros::E_MOTOR_GEAR_BLUE	, true);
+pros::Motor right_back_motor(11, pros::E_MOTOR_GEAR_BLUE	, true);
+
+pros::Motor intake(3, pros::E_MOTOR_GEAR_BLUE, false);
 
 pros::Imu inertial_sensor(20);
 pros::Optical colorSensor(0);
@@ -51,12 +53,11 @@ pros::Distance intakeDistSensor(0);
 SUBSYSTEMS
 */
 
-pros::Motor intake(7, pros::E_MOTOR_GEAR_BLUE, false); //reversed
 pros::Motor intake2(0);
 
 Intake intake_class;
 
-pros::Motor wallmotor(8);
+pros::Motor wallmotor(14, pros::E_MOTOR_GEAR_RED	, true);
 
 Ladybrown ladybrown_class;
 
@@ -79,19 +80,19 @@ pros::MotorGroup left_side_motors({left_front_motor, left_center_motor, left_bac
 pros::MotorGroup right_side_motors({right_front_motor, right_center_motor, right_back_motor});
 
 lemlib::Drivetrain drivetrain {
-    &left_side_motors, // left drivetrain motors
-    &right_side_motors, // right drivetrain motors
-    12, // track width
-    lemlib::Omniwheel::NEW_325_HALF, // wheel diameter
-    450, // wheel rpm
-    0
+        &left_side_motors, // left drivetrain motors
+        &right_side_motors, // right drivetrain motors
+        12, // track width
+        lemlib::Omniwheel::NEW_325_HALF, // wheel diameter
+        600, // wheel rpm
+        0
 };
 
 /*
 SENSORS
 */
 
-pros::Rotation wallrot(19, false); 
+pros::Rotation wallrot(5, false); 
 
 pros::Rotation horizontal_rot(10); // port 1, not reversed
 pros::Rotation vertical_rot(9); // port 1, not reversed
@@ -257,9 +258,9 @@ void blueColorSort() {
 LADYBROWN THREAD
 */
 
-#define targetWait 32
-#define targetTop 164
-#define targetDown 210
+#define targetWait 49
+#define targetTop 169
+#define targetDown 225
 #define targetHold 54
 bool moveDown = false;
 
