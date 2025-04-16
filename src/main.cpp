@@ -45,8 +45,8 @@ pros::Motor right_back_motor(11, pros::E_MOTOR_GEAR_BLUE	, true);
 pros::Motor intake(3, pros::E_MOTOR_GEAR_BLUE, false);
 
 pros::Imu inertial_sensor(7);
-pros::Optical colorSensor(0);
-pros::Distance intakeDistSensor(0);
+pros::Optical colorSensor(4);
+pros::Distance intakeDistSensor(16);
 
 
 /*
@@ -69,10 +69,10 @@ PNEUMATICS
 PNEUMATICS
 */
 
-pros::ADIDigitalOut clamp('A'); //backwings H, F
-pros::ADIDigitalOut hangs('G');
+pros::ADIDigitalOut clamp('H'); //backwings H, F
+pros::ADIDigitalOut hangs('Z');
 pros::ADIDigitalOut doinker('G');
-pros::ADIDigitalOut raiseasdasd('C');
+pros::ADIDigitalOut raiseasdasd('F');
 pros::ADIDigitalOut leftdoinker('D');
 pros::ADIAnalogOut doinkerclamp('E');
 
@@ -404,8 +404,8 @@ void soloWP(){
     chassis.moveToPoint(0, -7, 500);
     chassis.turnToHeading(-52,600);
     chassis.moveToPoint(18.6, -25.9, 600, {.forwards=false, .earlyExitRange = 8});  
-    chassis.moveToPoint(25, -31.8, 600, {.forwards=false, .maxSpeed = 60});  
-    pros::delay(500);
+    chassis.moveToPoint(25, -31.8, 600, {.forwards=false, .maxSpeed = 90});  
+    pros::delay(300);
     clamp.set_value(true);
     ladybrown_class.set_angle(-200);
     chassis.turnToHeading(-144,600);
@@ -420,16 +420,43 @@ void soloWP(){
     move(127, 0);
     pros::delay(700);
     chassis.moveToPoint(2.7, -44.7, 800, {.forwards=false, .maxSpeed = 127}, false);
-    chassis.turnToHeading(10,600);
-    chassis.moveToPoint(22.6,-2.4 , 1100);
+    // chassis.turnToHeading(10,600);
+    chassis.turnToPoint(27.2, 30.6, 600);
+    // chassis.moveToPoint(22.6,-2.4 , 1100);
     pros::delay(500);
     clamp.set_value(false);
-    chassis.moveToPoint(23.9,14 , 1100, { .maxSpeed = 90});
+    chassis.moveToPoint(27.2, 30.6, 2000, {.maxSpeed = 80});
+
+
     pros::delay(200);
+    colorSensor.set_led_pwm(100);
+    while(colorSensor.get_hue() >= 20)
+    {
+        ;
+    }
+    intake_class.set_velocity(-60);
+    pros::delay(100);
     intake_class.set_velocity(0);
-    chassis.turnToHeading(-82, 600);
-    chassis.moveToPoint(43.6, 10, 600, {.forwards=false, .earlyExitRange = 8});  
-    // chassis.moveToPoint(, -31.8, 600, {.forwards=false, .maxSpeed = 60});  
+
+    // chassis.turnToPoint(47.1,18.1,1000, {.forwards = false});
+    chassis.turnToHeading(-61, 1000);
+    chassis.moveToPoint(47.1,18.1, 500, {.forwards=false, .earlyExitRange = 8});
+    chassis.moveToPoint(53.8,14.1, 2000, {.forwards=false, .maxSpeed = 60});
+
+
+    pros::delay(500);
+    clamp.set_value(true);
+
+    intake_class.set_velocity(127);
+    chassis.turnToPoint(70, 36.7,600);
+    chassis.moveToPoint(70, 36.7, 1100);
+    
+    ladybrown_class.set_angle(60);
+    
+    chassis.turnToPoint(63.5, -2.1,600, {.forwards = false});
+    chassis.moveToPoint(63.5, -2.1, 1100, {.forwards = false});
+
+
 
 
 
