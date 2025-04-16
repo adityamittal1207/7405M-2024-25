@@ -44,7 +44,7 @@ pros::Motor right_back_motor(11, pros::E_MOTOR_GEAR_BLUE	, true);
 
 pros::Motor intake(3, pros::E_MOTOR_GEAR_BLUE, false);
 
-pros::Imu inertial_sensor(20);
+pros::Imu inertial_sensor(7);
 pros::Optical colorSensor(0);
 pros::Distance intakeDistSensor(0);
 
@@ -65,9 +65,13 @@ Ladybrown ladybrown_class;
 PNEUMATICS
 */
 
+/*
+PNEUMATICS
+*/
+
 pros::ADIDigitalOut clamp('A'); //backwings H, F
 pros::ADIDigitalOut hangs('G');
-pros::ADIDigitalOut doinker('B');
+pros::ADIDigitalOut doinker('G');
 pros::ADIDigitalOut raiseasdasd('C');
 pros::ADIDigitalOut leftdoinker('D');
 pros::ADIAnalogOut doinkerclamp('E');
@@ -94,7 +98,7 @@ SENSORS
 
 pros::Rotation wallrot(5, false); 
 
-pros::Rotation horizontal_rot(10); // port 1, not reversed
+pros::Rotation horizontal_rot(15); // port 1, not reversed
 pros::Rotation vertical_rot(9); // port 1, not reversed
 
 lemlib::TrackingWheel horizontal_track(&horizontal_rot, lemlib::Omniwheel::NEW_275 , -3.6f); // 0.6 -0.9
@@ -116,7 +120,7 @@ lemlib::OdomSensors sensors {
 PID CONTROLLERS
 */
 
-lemlib::ControllerSettings lateralController(10, // proportional gain (kP)
+lemlib::ControllerSettings lateralController(9, // proportional gain (kP)
                                               0, // integral gain (kI)
                                               55, // derivative gain (kD)
                                               10, // anti windup
@@ -127,9 +131,12 @@ lemlib::ControllerSettings lateralController(10, // proportional gain (kP)
                                               0 // maximum acceleration (slew)
 );
 
-lemlib::ControllerSettings angularController(3, // proportional gain (kP)
-                                              0.1, // integral gain (kI)
-                                              35, // derivative gain (kD)
+
+
+
+lemlib::ControllerSettings angularController(4, // proportional gain (kP)
+                                              0, // integral gain (kI)
+                                              45, // derivative gain (kD)
                                               5, // anti windup
                                               0.5, // small error range, in inches
                                               1000, // small error range timeout, in milliseconds
@@ -258,7 +265,7 @@ void blueColorSort() {
 LADYBROWN THREAD
 */
 
-#define targetWait 49
+#define targetWait 23
 #define targetTop 169
 #define targetDown 225
 #define targetHold 54
@@ -266,12 +273,17 @@ bool moveDown = false;
 
 // bool ladybrown_manual = false;
 std::atomic_bool ladybrown_manual(false);
+std::atomic_bool ladybrown_slow(false);
+
+inline double clamp123(const double val){
+    return (val > 127) ? 127 : val;
+}
 
 void Ladybrown_thread(){
     while(true){
         ladybrown_class.update(wallrot.get_position());
         if (!ladybrown_manual.load()){
-            wallmotor.move(ladybrown_class.get_velocity(moveDown));
+            wallmotor.move(ladybrown_class.get_velocity(false) * (ladybrown_slow ? 0.5f: 1.0f));
         }
         pros::delay(10);
     }
@@ -381,1883 +393,68 @@ void disabled() {
  */
 void competition_initialize() {}
 
-void skillsAutonWallStakes() {
-    chassis.setPose(0, 0, 0);
-    ladybrown_manual.store(true);
-    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
-    clamp.set_value(true);
-    intake_class.set_velocity(127);
-    pros::delay(700);
-    intake_class.set_velocity(0);
-    pros::delay(200);
-    chassis.moveToPoint(0, 12, 500, {.forwards=true, .maxSpeed = 80});
-    chassis.turnToHeading(-89, 550, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 55});
-    chassis.moveToPoint(21, 13, 700, {.forwards=false, .maxSpeed = 80});
-    pros::delay(600);
-    clamp.set_value(false);
-    chassis.turnToHeading(7, 600, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 50});
-    chassis.moveToPoint(24.7, 38.1, 800, {.forwards=true, .maxSpeed = 80});
-    intake_class.set_velocity(127);
-    //cross auton line & get ring to store in lb
-    //go to auton line & turn towards wall stake while intaking ring
-    //score wall stake
-    chassis.turnToHeading(60, 600, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 55});
-    chassis.moveToPoint(47, 67, 1100, {.forwards=true, .maxSpeed = 120});
-    chassis.turnToHeading(6, 500, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60});
-    chassis.moveToPoint(50, 88, 900, {.forwards=true, .maxSpeed = 80});
-    chassis.turnToHeading(14.3, 500, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60});
-    intake_class.maxTorque = 0.50;
-
-    // pros::delay(942949249294294424);
-    chassis.moveToPoint(43.3, 62,     1300, {.forwards=false, .maxSpeed = 95}, false);
-    ladybrown_manual.store(false);
-    ladybrown_class.set_angle(targetWait);
-    wallmotor.move_velocity(0);
-    chassis.turnToHeading(92, 1000, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60});
-    chassis.moveToPoint(61, 63.3, 800, {.forwards=true, .maxSpeed = 55}, true);
-
-    // pros::delay(2949249292499294294294242424);
-
-    
-    pros::delay(1500);
-    intake_class.set_velocity(0);
-    pros::delay(100);
-    ladybrown_manual.store(true);
-    wallmotor.move(127);
-    move(50, 0);
-    // intake.move(0);
-    pros::delay(870);
-    wallmotor.move(-127);
-    chassis.moveToPoint(46.6, 64.6, 900, {.forwards=false, .maxSpeed = 100}, false);
-    intake_class.maxTorque = 0.35;
-    pros::delay(900); 
-    wallmotor.move(0);
-    // pros::delay(492944924924922424);
-    intake_class.set_velocity(127);
-    chassis.turnToHeading(181, 850, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60}); 
-
-    // pros::delay(949249492949424);
-
-    chassis.moveToPoint(46, 0, 4500, {.forwards=true, .maxSpeed = 50});  
-
-    chassis.turnToHeading(57, 850, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60}); 
-    
-    chassis.moveToPoint(60, 13.4, 700, {.forwards=true, .maxSpeed = 60});  
-
-    // pros::delay(294429494249424242424);
-    
-    chassis.turnToHeading(-19, 750, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60}); 
-    chassis.moveToPoint(63.3, 4.6, 1000, {.forwards=false, .maxSpeed = 100});  
-    pros::delay(300);
-    intake_class.set_velocity(-50);
-    clamp.set_value(true);
-
-    pros::delay(300);
-
-    // pros::delay(4924922494942424);
-    intake_class.set_velocity(127);
-    chassis.moveToPoint(-25, 23, 1000, {.forwards=true, .maxSpeed = 50});
-    chassis.turnToHeading(90, 1000, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 55});
-    // pros::delay(2294929429429429242442);
-    intake_class.set_velocity(0);
-    chassis.moveToPoint(-25, 11, 2400, {.forwards=false, .maxSpeed = 70});
-    pros::delay(1800);
-    clamp.set_value(false);
-    intake_class.set_velocity(127);
-
-    chassis.turnToHeading(367, 800, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 50});
-    chassis.moveToPoint(-24, 35.3, 1000, {.forwards=true, .maxSpeed = 80});
-    // pros::delay(124225252525254254254254245524452);
-
-    chassis.turnToHeading(-53.5, 600, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 50});
-    
-    chassis.moveToPoint(-55, 54, 1500, {.forwards=true, .maxSpeed = 80});
-
-    // pros::delay(294929429494924924);
-
-    chassis.moveToPoint(-51, 56.3, 1000, {.forwards=false, .maxSpeed = 80});
-
-    chassis.turnToHeading(0, 600, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80});
-
-    chassis.moveToPoint(-50.3, 81.9, 1000, {.forwards=true, .maxSpeed = 50});
-
-
-    
-    //cross auton line & get ring to store in lb
-    //go to auton line & turn towards wall stake while intaking ring
-    //score wall stake
-    chassis.turnToHeading(180, 600, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 55});
-    chassis.moveToPoint(-52, 6.4, 4200, {.forwards=true, .maxSpeed = 50});
-    chassis.moveToPoint(-57.3, 14.9, 800, {.forwards=false, .maxSpeed = 100});
-
-    chassis.turnToHeading(48.5, 500, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 90});
-
-    chassis.moveToPoint(-64.2, -3, 1000, {.forwards=false, .maxSpeed = 100}, false);
-    clamp.set_value(true);
-    intake_class.set_velocity(-50);
-    pros::delay(200);
-
-
-
-    //chassis.turnToHeading(158, 800, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60});
-    chassis.moveToPoint(-49, 56.7, 1000, {.forwards=true, .maxSpeed = 100}, false);
-    intake_class.set_velocity(0);
-    //chassis.turnToHeading(9, 600, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60});
-    chassis.turnToHeading(30, 700, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60});
-    intake_class.set_velocity(127);
-    chassis.moveToPoint(-25.8, 88, 1000, {.forwards=true, .maxSpeed = 100});
-    
-    
-    //gkk
-    chassis.turnToHeading(-129, 900, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60});
-    intake_class.set_velocity(0);
-    chassis.moveToPoint(6, 114.2, 900, {.forwards=false, .maxSpeed = 70});
-    pros::delay(800);
-
-    // pros::delay(924924294929494294924949494424);
-
-    clamp.set_value(false);  
-
-    // chassis.turnToHeading(-18, 600, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60});
-    intake_class.set_velocity(-50);
-    // wallmotor.move_voltage(127);
-
-    // wallmotor.move_voltage(-127);
-
-    // wallmotor.move_voltage(0);
-
-    intake_class.set_velocity(127); 
-    chassis.turnToHeading(137.7, 900, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80});
-    chassis.moveToPoint(27, 80, 800, {.forwards=true, .maxSpeed = 70});
-    pros::delay(1400);    
-
-    chassis.turnToHeading(41.3, 800, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80});
-
-    chassis.moveToPoint(52.4, 114.7, 1000, {.forwards=true, .maxSpeed = 50});   
-    
-    chassis.turnToHeading(90, 800, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 50}, false);
-    intake_class.set_velocity(0);
-    chassis.moveToPoint(80, 115.8, 800, {.forwards=true, .maxSpeed = 40});   
-
-    chassis.turnToHeading(-139, 800, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}, false);
-    clamp.set_value(true);
-    chassis.moveToPoint(61.2, 114.6, 1000, {.forwards=false, .maxSpeed = 127});   
-    chassis.moveToPoint(48.4, 105.7, 800, {.forwards=true, .maxSpeed = 40});   
-    chassis.turnToHeading(-259, 800, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}, false);
-    chassis.moveToPoint(-54.8, 127.5, 4000, {.forwards=false, .maxSpeed = 100});   
-
-}
-
-#define targetDownSkills 190
-
-void skillsAutonStatesWallStakes() {
-    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
-    clamp.set_value(true);
-    
-    //put ring onto wall stake
-    intake_class.set_velocity(127);
-    pros::delay(400);
-    intake_class.set_velocity(0);
-    
-    //move forward, turn to clamp, move towards ring in front of ladder & intake
-    chassis.moveToPoint(0, 12, 450, {.forwards=true, .maxSpeed = 100});
-    chassis.turnToHeading(-90, 500, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80});
-    chassis.moveToPoint(27.5, 12, 900, {.forwards=false, .maxSpeed = 70});
-    autoclamp_bool = true;
-    // pros::delay(800);
-    // clamp.set_value(false);
-    chassis.turnToHeading(7, 450, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80});
-    autoclamp_bool = false;
-    chassis.moveToPoint(24.7, 38.1, 700, {.forwards=true, .maxSpeed = 100});
-    intake_class.set_velocity(127);
-    
-    //turn towards first ring across auton line, move farther to get ring in lb
-    chassis.turnToHeading(60, 500, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80});
-    intake_class.set_velocity(0);
-    chassis.moveToPoint(47, 67, 800, {.forwards=true, .maxSpeed = 80});
-    intake_class.set_velocity(127);
-    chassis.turnToHeading(6, 450, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 100});
-    chassis.moveToPoint(50, 90, 900, {.forwards=true, .maxSpeed = 100});
-    // chassis.turnToHeading(34, 500, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 100});
-    // chassis.moveToPoint(61, 110, 1300, {.forwards=true, .maxSpeed = 100}, true);
-
-    // ladybrown_manual.store(false);
-    // ladybrown_class.set_angle(targetWait);x
-
-    // intake_class.maxTorque = 0.5;
-    
-    // pros::delay(94942949244242424);
-
-    //move back to auton line, turn towards wall stake
-    chassis.moveToPoint(45.1, 67, 1000, {.forwards=false, .maxSpeed = 75});
-
-
-    chassis.turnToHeading(89, 700, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 85});
-
-    // intake_class.set_velocity(0);
-    // pros::delay(200);
-    // ladybrown_class.set_angle(targetHold);
-    // // chassis.turnToHeading(90, 1200, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 100});
-    // pros::delay(100);
-    // intake_class.set_velocity(127);
-
-    ladybrown_manual.store(false);
-    ladybrown_class.set_angle(targetWait);
-
-    intake_class.maxTorque = 0.5;
-
-    chassis.moveToPoint(61, 66, 650, {.forwards=true, .maxSpeed = 60}, false);
-
-    pros::delay(200);
-
-    getPose();
-
-    //move into wall stake, activate lady brown & score on wall stake 
-    move(30, 0);
-    pros::delay(500);
-    intake_class.set_velocity(0);
-    move(50, 0);
-    pros::delay(200);
-    ladybrown_class.set_angle(targetDownSkills);
-    pros::delay(500);
-    move(-30, 0);
-    pros::delay(300);
-    setPose(60, 67);
-    chassis.moveToPoint(53, 67, 500, {.forwards=false, .maxSpeed = 110}); 
-    ladybrown_class.set_angle(0);
-
-    intake_class.set_velocity(127);
-    intake_class.maxTorque = 0.4;
-
-    //move back while on auton line, turn towards line of 3 rings
-    chassis.turnToHeading(182, 600, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80}); 
-    
-    //move forward into 3 rings, get diagonal ring, turn, and drop mogo 
-    chassis.moveToPoint(44.5, 2.6, 1450, {.forwards=true, .maxSpeed = 70}); 
-    chassis.moveToPoint(46.3, 2.6, 800, {.forwards=true, .maxSpeed = 40}); 
-    chassis.turnToHeading(50, 900, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 50}); 
-    chassis.moveToPoint(60.5, 11, 900, {.forwards=true, .maxSpeed = 70}); 
-    chassis.turnToHeading(320, 750, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60}); 
-    chassis.moveToPoint(64, 2.1, 700, {.forwards=false, .maxSpeed = 127});  
-    pros::delay(300);
-    intake_class.set_velocity(-127);
-    //unclamp mogo in corner
-    clamp.set_value(true);
-    pros::delay(400);
-    
-    //----------------------------END OF QUADRANT 1, STARTING FROM ENDING POSITION IN 1 MOVING INTO QUADRANT 2----------------------------
-
-    //move forward from corner, turn towards other side mogo, move to mogo, & clamp
-    intake_class.set_velocity(127);
-
-    chassis.moveToPoint(-25, 18, 1000, {.forwards=true, .maxSpeed = 100});
-
-    chassis.turnToHeading(93.5, 800, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 90});
-
-    intake_class.set_velocity(0);
-
-    chassis.moveToPoint(-30, 14.5, 700, {.forwards=false, .maxSpeed = 80});
-    chassis.moveToPoint(-32, 14.5, 1000, {.forwards=false, .maxSpeed = 45});
-
-    autoclamp_bool = true;
-
-    intake_class.set_velocity(127);
-
-    //turn towards ring in front of ladder, move to & intake 
-    chassis.turnToHeading(367, 400, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80});
-    
-    autoclamp_bool = false;
-    
-    chassis.moveToPoint(-26, 35.3, 800, {.forwards=true, .maxSpeed = 80});
-    
-    //turn towards ring, move towards in front of wall stake & intake, move to ring across auton line
-    chassis.turnToHeading(-41, 450, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80});
-    
-    chassis.moveToPoint(-45, 66, 1200, {.forwards=true, .maxSpeed = 75});
-
-    pros::delay(550);
-
-    ladybrown_manual.store(false);
-    
-    ladybrown_class.set_angle(targetWait);
-
-    intake_class.maxTorque = 0.5;
-
-    //
-    chassis.turnToHeading(-85, 700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80});
-
-    intake_class.set_velocity(0);
-
-    chassis.moveToPoint(-61, 66, 800, {.forwards=true, .maxSpeed = 70}, true);
-
-    pros::delay(100);
-
-    intake_class.set_velocity(127);
-
-    pros::delay(700);
-
-    getPose();
-
-    move(55, 0);
-
-    pros::delay(500);
-    intake_class.set_velocity(-20);
-    pros::delay(200);
-    ladybrown_class.set_angle(190);
-    intake_class.set_velocity(0);
-    pros::delay(620);
-    ladybrown_class.set_angle(0);
-
-    intake_class.maxTorque = 0.35;
-    move(-30,0);
-    pros::delay(300);
-    move(0, 0);
-    
-    setPose(-59, 63.5);
-    chassis.moveToPoint(-50, 63.5, 700, {.forwards=false, .maxSpeed = 80}, false);
-
-    chassis.turnToHeading(0, 600, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80});
-
-    chassis.moveToPoint(-48, 86.2, 800, {.forwards=true, .maxSpeed = 110});
-
-    intake_class.set_velocity(127);
-
-    chassis.turnToHeading(180, 800, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80});
-
-    chassis.moveToPoint(-47.5, 3.1, 950, {.forwards=true, .maxSpeed = 110});
-
-    chassis.moveToPoint(-47.5, 2, 1500, {.forwards=true, .maxSpeed = 57.5});
-
-    chassis.turnToHeading(-45, 1000, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 65});
-    // pros::delay(1010010100002);
-
-    chassis.moveToPoint(-59.8, 17.6, 900, {.forwards=true, .maxSpeed = 85});
-
-    chassis.turnToHeading(34, 700, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 100});
-
-    chassis.moveToPoint(-58.9, 3.2, 500, {.forwards=false, .maxSpeed = 110}), false;
-
-    intake_class.set_velocity(-50);
-
-    clamp.set_value(true);
-
-    chassis.moveToPoint(-46.9, 24, 800, {.forwards=true, .maxSpeed = 127});
-
-    chassis.turnToHeading(7, 500, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 100});
-
-    chassis.moveToPoint(-41.9, 68, 1000, {.forwards=true, .maxSpeed = 112});
-
-    chassis.turnToHeading(42, 325, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 100});
-
-    intake_class.set_velocity(127);
-
-    ladybrown_class.set_angle(targetWait);
-
-    intake_class.maxTorque = 0.35;
-    
-    chassis.moveToPoint(-19, 94, 1000, {.forwards=true, .maxSpeed = 85});
-
-    // pros::delay(9349239494239492349423423423);
-
-    chassis.turnToHeading(223, 850, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 75});
-    autoclamp_bool = true;
-
-    chassis.moveToPoint(1.9, 113.5, 200, {.forwards=false, .maxSpeed = 95});
-
-    chassis.moveToPoint(3.7, 113.5, 890, {.forwards=false, .maxSpeed = 60});
-
-    // pros::delay(950);
-
-    // clamp.set_value(false);
-    chassis.turnToHeading(0, 800, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 85});
-    chassis.moveToPoint(5.3, 126, 900, {.forwards=true, .maxSpeed = 60}, false);
-
-    autoclamp_bool = false;
-
-    move(60, 0);
-
-    pros::delay(200);
-    intake_class.set_velocity(0);
-    ladybrown_class.set_angle(80);
-
-    move(-55, 0);
-
-    pros::delay(200);
-
-    ladybrown_class.set_angle(150);
-
-    pros::delay(140);
-
-    move(0, 0);
-
-    ladybrown_class.set_angle(180);
-
-    pros::delay(200);
-
-    ladybrown_class.set_angle(230);
-
-    move(20, 0);
-
-    pros::delay(250);
-
-    move(0,0);
-
-    chassis.moveToPoint(4.7, 110, 500, {.forwards=false, .maxSpeed = 80});
-
-    pros::delay(500);
-
-    ladybrown_class.set_angle(0);
-
-    chassis.turnToHeading(270, 575, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 90});
-
-    chassis.moveToPoint(-50, 112.5, 1500, {.forwards=true, .maxSpeed = 75});
-
-    intake_class.set_velocity(127);
-
-    chassis.turnToHeading(132, 700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 95});
-
-    chassis.moveToPoint(0.8, 64.5, 1250, {.forwards=true, .maxSpeed = 127});
-
-    pros::delay(350);
-
-    intake_class.set_velocity(0);
-
-    pros::delay(550);
-
-    intake_class.set_velocity(127);
-
-    pros::delay(200);
-
-    chassis.turnToHeading(48, 550, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 97});
-
-    chassis.moveToPoint(51, 113, 1300, {.forwards=true, .maxSpeed = 110});
-
-    pros::delay(300);
-
-    intake_class.set_velocity(0);
-
-    pros::delay(300);
-
-    intake_class.set_velocity(127);
-
-    chassis.turnToHeading(96, 500, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 100});
-
-    chassis.moveToPoint(62, 108.5, 1000, {.forwards=true, .maxSpeed = 70});
-
-    chassis.turnToHeading(200, 1000, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 95}, false);
-
-    clamp.set_value(true);
-
-    pros::delay(200);
-
-    // leftdoinker.set_value(true);
-
-    chassis.moveToPoint(64, 127.1, 900, {.forwards=false, .maxSpeed = 100});
-
-    // leftdoinker.set_value(false);
-
-    intake_class.set_velocity(-127);
-
-    chassis.moveToPoint(60.5, 110, 600, {.forwards=true, .maxSpeed = 127});
-
-    chassis.turnToHeading(110, 400, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 120});
-
-    intake.move(0);
-
-    chassis.moveToPoint(-63, 138, 2500, {.forwards=false, .maxSpeed = 127});
-
-    chassis.moveToPoint(-28.7, 94.4, 750, {.forwards=true, .maxSpeed = 127});
-
-    ladybrown_class.set_angle(targetDown);
-
-    chassis.turnToHeading(-45, 1200, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60}, false);
-
-    move(-0.5*127, 0);
-
-    intake_class.set_velocity(0);
-
-    pros::delay(1000);
-
-    intake_class.set_velocity(-20);
-
-    pros::delay(200);
-
-    move(20, 0);
-
-    pros::delay(300);
-
-    move(0,0);
-
-
-    // chassis.moveToPoint()
-
-    
-
-    pros::delay(9249249924929424242424424244);
-
-    // -50 ,63.5
-
-    //
-    chassis.turnToHeading(180, 600, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 55});
-    chassis.moveToPoint(-52, 6.4, 4200, {.forwards=true, .maxSpeed = 50});
-    chassis.moveToPoint(-57.3, 14.9, 800, {.forwards=false, .maxSpeed = 100});
-
-    chassis.turnToHeading(48.5, 500, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 90});
-
-    chassis.moveToPoint(-64.2, -3, 1000, {.forwards=false, .maxSpeed = 100}, false);
-    clamp.set_value(true);
-    intake_class.set_velocity(-50);
-    pros::delay(200);
-
-
-
-    //chassis.turnToHeading(158, 800, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60});
-    chassis.moveToPoint(-49, 56.7, 1000, {.forwards=true, .maxSpeed = 100}, false);
-    intake_class.set_velocity(0);
-    //chassis.turnToHeading(9, 600, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60});
-    chassis.turnToHeading(30, 700, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60});
-    intake_class.set_velocity(127);
-    chassis.moveToPoint(-25.8, 88, 1000, {.forwards=true, .maxSpeed = 100});
-    
-    
-    //gkk
-    chassis.turnToHeading(-129, 900, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60});
-    intake_class.set_velocity(0);
-    chassis.moveToPoint(6, 114.2, 900, {.forwards=false, .maxSpeed = 70});
-    pros::delay(800);
-
-    // pros::delay(924924294929494294924949494424);
-
-    clamp.set_value(false);  
-    
-    // chassis.turnToHeading(-18, 600, {.direction=lemlib::AngularDirection::CCW_gitUNTERCLOCKWISE, .maxSpeed = 60});
-    intake_class.set_velocity(-50);
-    // wallmotor.move_voltage(127);
-
-    // wallmotor.move_voltage(-127);
-
-    // wallmotor.move_voltage(0);
-
-    intake_class.set_velocity(127); 
-    chassis.turnToHeading(137.7, 900, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80});
-    chassis.moveToPoint(27, 80, 800, {.forwards=true, .maxSpeed = 70});
-    pros::delay(1400);    
-
-    chassis.turnToHeading(41.3, 800, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80});
-
-    chassis.moveToPoint(52.4, 114.7, 1000, {.forwards=true, .maxSpeed = 50});   
-    
-    chassis.turnToHeading(90, 800, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 50}, false);
-    intake_class.set_velocity(0);
-    chassis.moveToPoint(80, 115.8, 800, {.forwards=true, .maxSpeed = 40});   
-
-    chassis.turnToHeading(-139, 900, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 50}, false);
-    clamp.set_value(true);
-    chassis.moveToPoint(65, 119.6, 1000, {.forwards=false, .maxSpeed = 127});   
-    chassis.moveToPoint(48.4, 105.7, 800, {.forwards=true, .maxSpeed = 40});   
-    chassis.turnToHeading(-259, 800, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}, false);
-    chassis.moveToPoint(-54.8, 127.5, 4000, {.forwards=false, .maxSpeed = 100});   
-
-}
-
-float sumError2 = 0.0f; 
-float p2 = 0.1f;
-float targetPos2 = 30;
-
-void pidUpdate() {
-    float error = targetPos2 - wallrot.get_angle();
-    float returnVolt = p2 * error;
-    wallmotor.move(127*returnVolt);
-    p2 = 0.01;
-
-}
-
-void newBotRedMogo(){
-    clamp.set_value(true);
-    raiseasdasd.set_value(false);
-
-    //initial move & slight turn towards wall motor - gets on alliance stake
-    wallmotor.move(-127);
-    chassis.moveToPoint(0, 10.5, 1000, {.forwards=true, .maxSpeed = 70});  
-    pros::delay(200);
-    wallmotor.move(0);
-    chassis.turnToHeading(-7, 1000, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 90}); 
-    wallmotor.move(127);
-    pros::delay(335);
-    wallmotor.move(-127);
-
-    //turn towards ring in front of alliance stake, moves to get it, 
-    chassis.turnToHeading(89, 1000, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 90}); 
-    raiseasdasd.set_value(true);
-    intake.move(127);
-    chassis.moveToPoint(12, 10, 1000, {.forwards=true, .maxSpeed = 70});  
-    wallmotor.move(0);
-    chassis.turnToHeading(-16, 1000, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
-    pros::delay(300);
-    intake.move(0);
-    wallmotor.move(0);
-    raiseasdasd.set_value(false);
-
-    //move to mogo to clamp, turn towards ring in front of center rings to intake 
-    chassis.moveToPoint(17, -27, 1050, {.forwards=false, .maxSpeed = 80});  
-    pros::delay(950);
-    clamp.set_value(false);
-    chassis.turnToHeading(-129, 1000, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
-    chassis.moveToPoint(5.8, -40.5, 1000, {.forwards=true, .maxSpeed = 100});  
-    intake.move(127);
-
-    chassis.turnToHeading(-48, 1000, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80}); 
-    chassis.moveToPoint(-22.8, -19.2, 1000, {.forwards=true, .maxSpeed = 100});  
-
-    intake.move(-127);
-
-    chassis.moveToPoint(-16.1, -25.5, 1000, {.forwards=false, .maxSpeed = 100});  
-
-    chassis.turnToHeading(-89, 1000, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}, false);
-
-    intake.move(127);
-
-    move(80, 0);
-
-    pros::delay(800);
-
-    move(0,0);
-
-    chassis.moveToPoint(35, -25, 1000, {.forwards=false, .maxSpeed = 100});  
-}
-
-void BlueRingC(){
-    ladybrown_manual=true;
-    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
-    clamp.set_value(true);
-    raiseasdasd.set_value(false);
-    //wallmotor.move(-127);
-    chassis.moveToPoint(0, 7.5, 700, {.forwards=true, .maxSpeed = 100});  
-    wallmotor.move(72);
-    chassis.turnToHeading(5, 700, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 127});
-    // pros::delay(100);
-    pros::delay(175);
-    pros::delay(150);
-    wallmotor.move(-127);
-    pros::delay(100);
-    wallmotor.move(0);
-    chassis.moveToPoint(0, 0, 700, {.forwards=false, .maxSpeed = 127}, false);  
-    wallmotor.move(-127);
-    //pros::delay(1000);
-
-    //turn towards ring in front of alliance stake, moves to get it, 
-    chassis.turnToHeading(68, 700, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 127}); 
-    raiseasdasd.set_value(true);
-    intake_class.set_velocity(127);
-    chassis.moveToPoint(10.7, 6.1, 700, {.forwards=true, .maxSpeed = 127});  
-    wallmotor.move(-30);
-    pros::delay(600);
-    raiseasdasd.set_value(false);
-    pros::delay(200);
-    intake_class.set_velocity(0);
-    chassis.turnToHeading(-16, 800, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
-    wallmotor.move(0);
-    raiseasdasd.set_value(false);
-
-    //move to mogo to clamp, turn towards ring in front of center rings to intake 
-    chassis.moveToPoint(15.9, -25, 1000, {.forwards=false, .maxSpeed = 80});  
-    pros::delay(800);
-    clamp.set_value(false);
-    chassis.turnToHeading(-124, 800, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
-    //pros::delay(10000);
-    chassis.moveToPoint(2.5, -43, 900, {.forwards=true, .maxSpeed = 127});  
-    intake_class.set_velocity(127);
-    //pros::delay(10000);
-
-    //gets the ring in front of center rings, then gets rings on center
-    chassis.moveToPoint(18, -35.4, 800, {.forwards=false, .maxSpeed = 127});
-    chassis.turnToHeading(-181, 800, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
-    chassis.moveToPoint(17.8, -47.5, 800, {.forwards=true, .maxSpeed = 55});
-    chassis.moveToPoint(17.6, -42.4, 500, {.forwards=false, .maxSpeed = 90});
-    chassis.turnToHeading(-97, 600, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80}); 
-    chassis.moveToPoint(3.4, -41.9, 900, {.forwards=true, .maxSpeed = 55});
-    intake_class.set_velocity(-127);
-    chassis.turnToHeading(-208, 800, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
-    pros::delay(200);
-    intake_class.set_velocity(127);
-    chassis.moveToPoint(9, -53.5, 900, {.forwards=true, .maxSpeed = 127}, false);    intake.move(127);
-
-    chassis.turnToHeading(-217, 500, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127}); 
-
-    chassis.moveToPoint(-18, -32.1, 1000, {.forwards=false, .maxSpeed = 127});
-
-    chassis.turnToHeading(-88, 500, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 90}); 
-
-    // chassis.moveToPoint(-35.6, -24.4, 700, {.forwards=true, .maxSpeed = 127});
-
-    // chassis.moveToPoint(-18, -32.1, 1000, {.forwards=false, .maxSpeed = 127});
-
-
-    //corner
-    //raiseasdasd.set_value(false);
-    // chassis.turnToHeading(39, 800, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}, false);
-    // chassis.moveToPoint(12.5, -24.5, 1000, {.forwards=true, .maxSpeed = 40}, false);
-    // chassis.turnToHeading(75.7, 700, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80}, false);
-    // chassis.moveToPoint(-35, -25, 1000, {.forwards=false, .maxSpeed = 100});  
-    // wallmotor.move(30);
-}
-
-void RedRingC(){
-    ladybrown_manual = true;
-    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
-    clamp.set_value(true);
-    raiseasdasd.set_value(false);
-    chassis.moveToPoint(0, 7.5, 700, {.forwards=true, .maxSpeed = 100});  
-    wallmotor.move(72);
-    chassis.turnToHeading(-5, 700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127});
-    pros::delay(175);
-    pros::delay(150);
-    wallmotor.move(-127);
-    pros::delay(100);
-    wallmotor.move(0);
-    chassis.moveToPoint(0, 0, 700, {.forwards=false, .maxSpeed = 127}, false);  
-    wallmotor.move(-127);
-
-    chassis.turnToHeading(-68, 700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127}); 
-    raiseasdasd.set_value(true);
-    intake_class.set_velocity(127);
-    chassis.moveToPoint(-10.7, 6.1, 700, {.forwards=true, .maxSpeed = 127});  
-    wallmotor.move(-30);
-    pros::delay(600);
-    raiseasdasd.set_value(false);
-    pros::delay(200);
-    intake_class.set_velocity(0);
-    chassis.turnToHeading(16, 800, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80}); 
-    wallmotor.move(0);
-    raiseasdasd.set_value(false);
-
-    chassis.moveToPoint(-15.9, -25, 1000, {.forwards=false, .maxSpeed = 80});  
-    pros::delay(800);
-    clamp.set_value(false);
-    chassis.turnToHeading(124, 800, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80}); 
-    chassis.moveToPoint(-2.5, -43, 900, {.forwards=true, .maxSpeed = 127});  
-    intake_class.set_velocity(127);
-
-    chassis.moveToPoint(-18, -35.4, 800, {.forwards=false, .maxSpeed = 127});
-    chassis.turnToHeading(181, 800, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80}); 
-    chassis.moveToPoint(-17.8, -47.5, 800, {.forwards=true, .maxSpeed = 55});
-    chassis.moveToPoint(-17.6, -42.4, 500, {.forwards=false, .maxSpeed = 90});
-    chassis.turnToHeading(97, 600, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
-    chassis.moveToPoint(-3.4, -41.9, 900, {.forwards=true, .maxSpeed = 55});
-    intake_class.set_velocity(-127);
-    chassis.turnToHeading(208, 800, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80}); 
-    pros::delay(200);
-    intake_class.set_velocity(127);
-    chassis.moveToPoint(-9, -53.5, 900, {.forwards=true, .maxSpeed = 127}, false);
-    intake_class.set_velocity(127);
-
-    chassis.turnToHeading(217, 500, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 127}); 
-
-    chassis.moveToPoint(18, -32.1, 1000, {.forwards=false, .maxSpeed = 127});
-
-    chassis.turnToHeading(88, 500, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 90}); 
-}
-
-
-void BlueRingL(){
-    //scores alliance stake
-    ladybrown_manual.store(true);
-    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
-    clamp.set_value(true);
-    raiseasdasd.set_value(false);
-    chassis.moveToPoint(0, 7.4, 800, 
-        {.forwards=true, .maxSpeed = 100});  
-    wallmotor.move(80);
-    pros::delay(250);
-    pros::delay(160);
-    wallmotor.move(40);
-    pros::delay(200);
-    wallmotor.move(-40);
-    pros::delay(100);
-    wallmotor.move(0);
-    chassis.moveToPoint(0, 0, 700, 
-        {.forwards=false, .maxSpeed = 127}, false);  
-    wallmotor.move(-127);
-
-    //turn towards ring in front of alliance stake, moves to get it, 
-    chassis.turnToHeading(68, 700, 
-        {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 127}); 
-    raiseasdasd.set_value(true);
-    intake_class.set_velocity(127);
-    chassis.moveToPoint(10.7, 5.6, 700, 
-        {.forwards=true, .maxSpeed = 127});  
-    wallmotor.move(-30);
-    pros::delay(600);
-    raiseasdasd.set_value(false);
-    pros::delay(300);
-    intake_class.set_velocity(0);
-    chassis.turnToHeading(-16, 800, 
-        {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
-    wallmotor.move(0);
-    raiseasdasd.set_value(false);
-
-    //move to mogo to clamp, turn towards ring in front of center rings to intake 
-    chassis.moveToPoint(15.9, -25, 1000, 
-        {.forwards=false, .maxSpeed = 80});  
-    pros::delay(800);
-    clamp.set_value(false);
-    chassis.turnToHeading(-124, 800, 
-        {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
-    chassis.moveToPoint(2.5, -43, 900, 
-        {.forwards=true, .maxSpeed = 127});  
-    intake_class.set_velocity(127);
-
-    //gets the ring in front of center rings, then gets rings on center
-    chassis.moveToPoint(18, -35.4, 800, 
-        {.forwards=false, .maxSpeed = 127});
-    chassis.turnToHeading(-181, 800, 
-        {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
-    chassis.moveToPoint(17.8, -47.5, 800, 
-        {.forwards=true, .maxSpeed = 55});
-    chassis.moveToPoint(17.6, -42.4, 500, 
-        {.forwards=false, .maxSpeed = 90});
-    chassis.turnToHeading(-97, 600, 
-        {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80}); 
-    chassis.moveToPoint(3.4, -41.9, 900, 
-        {.forwards=true, .maxSpeed = 55});
-    intake_class.set_velocity(-127);
-    chassis.turnToHeading(-208, 800, 
-        {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
-    pros::delay(200);
-    intake_class.set_velocity(127);
-    chassis.moveToPoint(9, -53.5, 900, 
-        {.forwards=true, .maxSpeed = 127}, false);
-
-    //touches ladder
-    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
-    pros::delay(300);
-    chassis.moveToPoint(40, -22, 900, 
-        {.forwards=false, .maxSpeed = 100}, false);
-    wallmotor.move(127);
-    move(-50, 0);
-    pros::delay(200);
-    intake_class.set_velocity(0);
-    wallmotor.move_velocity(0);
-    pros::delay(130);
-    move(0,0);
-}
-
-void RedRingL(){
-    //scores alliance stake
-    ladybrown_manual=true;
-    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
-    clamp.set_value(true);
-    raiseasdasd.set_value(false);
-    chassis.moveToPoint(0, 7.4, 800, 
-        {.forwards=true, .maxSpeed = 100});  
-    wallmotor.move(90);
-    pros::delay(250);
-    pros::delay(160);
-    wallmotor.move(50);
-    pros::delay(200);
-    wallmotor.move(-40);
-    pros::delay(100);
-    wallmotor.move(0);
-    chassis.moveToPoint(0, 0, 700, {.forwards=false, .maxSpeed = 127}, false);  
-    wallmotor.move(-127);
-
-    //turn towards ring in front of alliance stake, moves to get it, 
-    chassis.turnToHeading(-68, 700, 
-        {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127}); 
-    raiseasdasd.set_value(true);
-    intake_class.set_velocity(127);
-    chassis.moveToPoint(-10.7, 5.6, 700, 
-        {.forwards=true, .maxSpeed = 127});  
-    wallmotor.move(-30);
-    pros::delay(600);
-    raiseasdasd.set_value(false);
-    pros::delay(300);
-    intake_class.set_velocity(0);
-    chassis.turnToHeading(16, 800, 
-        {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80}); 
-    wallmotor.move(0);
-    raiseasdasd.set_value(false);
-
-    //move to mogo to clamp, turn towards ring in front of center rings to intake 
-    chassis.moveToPoint(-15.9, -25, 1000, 
-        {.forwards=false, .maxSpeed = 80});  
-    pros::delay(800);
-    clamp.set_value(false);
-    chassis.turnToHeading(124, 800, 
-        {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80}); 
-    chassis.moveToPoint(-2.5, -43, 900, 
-        {.forwards=true, .maxSpeed = 127});  
-    intake_class.set_velocity(127);
-
-    //gets the ring in front of center rings, then gets rings on center
-    chassis.moveToPoint(-18, -35.4, 800, 
-        {.forwards=false, .maxSpeed = 127});
-    chassis.turnToHeading(181, 800, 
-        {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80}); 
-    chassis.moveToPoint(-17.8, -47.5, 800, 
-        {.forwards=true, .maxSpeed = 55});
-    chassis.moveToPoint(-17.6, -42.4, 500, 
-        {.forwards=false, .maxSpeed = 90});
-    chassis.turnToHeading(97, 600, 
-        {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
-    chassis.moveToPoint(-3.4, -41.9, 900, {
-        .forwards=true, .maxSpeed = 55});
-    intake_class.set_velocity(-127);
-    chassis.turnToHeading(208, 800, 
-        {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80}); 
-    pros::delay(200);
-    intake_class.set_velocity(127);
-    chassis.moveToPoint(-9, -53.5, 900, 
-        {.forwards=true, .maxSpeed = 127}, false);
-    
-    //touches ladder
-    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
-    pros::delay(300);
-    chassis.moveToPoint(-40, -22, 900, {.forwards=false, .maxSpeed = 127}, false);
-    wallmotor.move(127);
-    move(-80, 0);
-    pros::delay(200);
-    intake_class.set_velocity(0);
-    wallmotor.move_velocity(0);
-    pros::delay(130);
-    move(0,0);
-}
-
-void RedMogoQUAL(){
-    //scores alliance stake
-    ladybrown_manual.store(false);
-    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
-    clamp.set_value(true);
-    raiseasdasd.set_value(false);
-    chassis.moveToPoint(0, 7.4, 800, 
-        {.forwards=true, .maxSpeed = 100});  
-    wallmotor.move(90);
-    pros::delay(250);
-    pros::delay(160);
-    wallmotor.move(50);
-    pros::delay(200);
-    wallmotor.move(-40);
-    pros::delay(100);
-    wallmotor.move(0);
-    chassis.moveToPoint(0, 0, 700, 
-        {.forwards=false, .maxSpeed = 127}, false);  
-    wallmotor.move(-127);
-
-    //turn towards ring in front of alliance stake, moves to get it, 
-    chassis.turnToHeading(60, 700, 
-        {.direction=lemlib::AngularDirection::CW_CLOCKWISE, 
-            .maxSpeed = 127}); 
-    raiseasdasd.set_value(true);
-    intake_class.set_velocity(127);
-    chassis.moveToPoint(13.7, 4.6, 700, 
-        {.forwards=true, .maxSpeed = 127});  
-    wallmotor.move(-30);
-    pros::delay(600);
-    raiseasdasd.set_value(false);
-    pros::delay(400);
-    intake_class.set_velocity(0);
-    chassis.turnToHeading(-16, 800, 
-        {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, 
-            .maxSpeed = 80}); 
-    wallmotor.move(0);
-
-    //move to mogo to clamp, turn towards double stack and gets ring
-    chassis.moveToPoint(15.9, -25, 1000, 
-        {.forwards=false, .maxSpeed = 80});  
-    pros::delay(800);
-    clamp.set_value(false);
-    chassis.turnToHeading(-124, 800, 
-        {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, 
-            .maxSpeed = 80}); 
-    chassis.moveToPoint(2.5, -43, 900, 
-        {.forwards=true, .maxSpeed = 127});  
-    intake_class.set_velocity(127);
-    chassis.turnToHeading(-45.7, 890, 
-        {.direction=lemlib::AngularDirection::CW_CLOCKWISE, 
-            .maxSpeed = 40}, false);
-    pros::delay(600);
-
-    //turns to and scores corner ring
-    chassis.moveToPoint(-22.2, -19.7, 600, 
-        {.forwards=true, .maxSpeed = 127});  
-    intake_class.set_velocity(-127);
-    chassis.turnToHeading(0, 700, 
-        {.direction=lemlib::AngularDirection::CW_CLOCKWISE,
-             .maxSpeed = 80}); 
-    chassis.moveToPoint(-17.8, -30.7, 1100, 
-        {.forwards=false, .maxSpeed = 90});  
-    chassis.turnToHeading(-85, 700, 
-        {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, 
-            .maxSpeed = 80}); 
-    chassis.moveToPoint(-43, -29.7, 800, 
-        {.forwards=true, .maxSpeed = 100});  
-    intake_class.set_velocity(127);
-    pros::delay(800);
-
-    //touches ladder
-    chassis.moveToPoint(33.8, -25.5, 2000, 
-        {.forwards=false, .maxSpeed = 75});
-    wallmotor.move(127);
-    pros::delay(160);
-    wallmotor.move_velocity(0);
-}
-
-void BlueMogoQUAL(){
-    //scores alliance stake
-    ladybrown_manual=true;
-    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
-    clamp.set_value(true);
-    raiseasdasd.set_value(false);
-    chassis.moveToPoint(0, 7.4, 800, 
-        {.forwards=true, .maxSpeed = 100});  
-    wallmotor.move(90);
-    pros::delay(250);
-    pros::delay(160);
-    wallmotor.move(50);
-    pros::delay(200);
-    wallmotor.move(-40);
-    pros::delay(100);
-    wallmotor.move(0);
-    chassis.moveToPoint(0, 0, 700, 
-        {.forwards=false, .maxSpeed = 127}, false);  
-    wallmotor.move(-127);
-
-    //turn towards ring in front of alliance stake, moves to get it, 
-    chassis.turnToHeading(-60, 700, 
-        {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, 
-            .maxSpeed = 127}); 
-    raiseasdasd.set_value(true);
-    intake_class.set_velocity(127);
-    chassis.moveToPoint(-13.7, 4.6, 700, 
-        {.forwards=true, .maxSpeed = 127});  
-    wallmotor.move(-30);
-    pros::delay(600);
-    raiseasdasd.set_value(false);
-    pros::delay(400);
-    intake_class.set_velocity(0);
-    chassis.turnToHeading(16, 800, 
-        {.direction=lemlib::AngularDirection::CW_CLOCKWISE, 
-            .maxSpeed = 80}); 
-    wallmotor.move(0);
-
-    //move to mogo to clamp, turn towards double stack and gets ring
-    chassis.moveToPoint(-15.9, -25, 1000, 
-        {.forwards=false, .maxSpeed = 80});  
-    pros::delay(800);
-    clamp.set_value(false);
-    chassis.turnToHeading(124, 800, 
-        {.direction=lemlib::AngularDirection::CW_CLOCKWISE, 
-            .maxSpeed = 80}); 
-    chassis.moveToPoint(-2.5, -43, 900, 
-        {.forwards=true, .maxSpeed = 127});  
-    intake_class.set_velocity(127);
-    chassis.turnToHeading(45.7, 890, 
-        {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, 
-            .maxSpeed = 40}, false);
-    pros::delay(600);
-
-    //turns to and scores corner ring
-    chassis.moveToPoint(22.2, -19.7, 600, 
-        {.forwards=true, .maxSpeed = 127});  
-    intake_class.set_velocity(-127);
-    chassis.turnToHeading(0, 700, 
-        {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE,
-             .maxSpeed = 80}); 
-    chassis.moveToPoint(17.8, -30.7, 1100, 
-        {.forwards=false, .maxSpeed = 90});  
-    chassis.turnToHeading(85, 700, 
-        {.direction=lemlib::AngularDirection::CW_CLOCKWISE, 
-            .maxSpeed = 80}); 
-    chassis.moveToPoint(43, -29.7, 800, 
-        {.forwards=true, .maxSpeed = 100});  
-    intake_class.set_velocity(127);
-    pros::delay(800);
-
-    //touches ladder
-    chassis.moveToPoint(-33.8, -25.5, 2000, 
-        {.forwards=false, .maxSpeed = 75});
-    wallmotor.move(127);
-    pros::delay(160);
-    wallmotor.move_velocity(0);
-}
-
-
-void RedMogoELIM(){
-    ladybrown_manual.store(true);
-    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
-    clamp.set_value(true);
-    raiseasdasd.set_value(false);
-    //wallmotor.move(-127);
-    chassis.moveToPoint(0, 7.4, 800, {.forwards=true, .maxSpeed = 100});  
-    wallmotor.move(90);
-    // chassis.turnToHeading(-5, 700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127});
-    pros::delay(250);
-    pros::delay(170);
-    wallmotor.move(45);
-    pros::delay(230);
-    wallmotor.move(-40);
-    pros::delay(100);
-    wallmotor.move(0);
-    chassis.moveToPoint(0, 0, 700, {.forwards=false, .maxSpeed = 127}, false);  
-    wallmotor.move(-127);
-
-    //turn towards ring in front of alliance stake, moves to get it, 
-
-    chassis.turnToHeading(66.2, 700, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 127}); 
-
-    intake_class.set_velocity(0);
-    raiseasdasd.set_value(true);
-
-    // pros::delay(9329432943294932943243);
-    intake_class.set_velocity(127);
-    chassis.moveToPoint(10.1, 7.3, 700, {.forwards=true, .maxSpeed = 90});  
-    wallmotor.move(-30);
-    pros::delay(700);
-    raiseasdasd.set_value(false);
-    pros::delay(300);
-    intake_class.set_velocity(0);
-    chassis.turnToHeading(-16, 800, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 70}); 
-    wallmotor.move(0);
-    //move to mogo to clamp, turn towards ring in front of center rings to intake 
-    chassis.moveToPoint(15.9, -25, 1000, {.forwards=false, .maxSpeed = 80});  
-    pros::delay(800);
-    clamp.set_value(false);
-    chassis.turnToHeading(-124, 800, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
-    //pros::delay(10000);
-    chassis.moveToPoint(2.5, -43, 900, {.forwards=true, .maxSpeed = 127});  
-    intake_class.set_velocity(127);
-
-    chassis.turnToHeading(-45.7, 890, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 40}, false);
-    
-    pros::delay(600);
-
-    chassis.moveToPoint(-22.2, -19.7, 600, {.forwards=true, .maxSpeed = 127});  
-    intake_class.set_velocity(-127);
-    chassis.turnToHeading(0, 60, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 65}); 
-
-
-    chassis.moveToPoint(-17.8, -30.7, 600, {.forwards=false, .maxSpeed = 90});  
-
-    chassis.turnToHeading(-85, 600, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
-
-    chassis.moveToPoint(-43, -29.7, 800, {.forwards=true, .maxSpeed = 100});  
-
-    intake_class.set_velocity(127);
-    pros::delay(900);
-
-    // pros::delay(9394329432493249324923424324324);
-
-    chassis.moveToPoint(-15, -31, 700, {.forwards=false, .maxSpeed = 100}, false); 
-
-    chassis.turnToHeading(-215, 1200, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 45});
-
-    pros::delay(700);
-
-    clamp.set_value(true); 
-
-
-    pros::delay(500);
-
-    move(55, 0);
-
-    pros::delay(420);
-
-    move(0,0);
-
-    // chassis.moveToPoint(1.9, -44.2 , 700, {.forwards=true, .maxSpeed = 100}); 
-
-    chassis.turnToHeading(-407, 1100, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 70});
-
-    pros::delay(100);
-
-    // angle: 
-
-    // move(0.4f, 0.0f);
-
-    // // chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
-
-    // chassis.moveToPoint(33.8, -25.5, 2000, {.forwards=false, .maxSpeed = 75});
-
-    // wallmotor.move(127);
-
-    // pros::delay(160);
-
-    // wallmotor.move_velocity(0);
-}
-
-void BlueMogoELIM(){
-    // pros::delay(1850);
-    ladybrown_manual.store(true);
-    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
-    clamp.set_value(true);
-    raiseasdasd.set_value(false);
-    //wallmotor.move(-127);
-    chassis.moveToPoint(0, 10.3, 800, {.forwards=true, .maxSpeed = 100});  
-    wallmotor.move(90);
-    // chassis.turnToHeading(-5, 700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127});
-    pros::delay(250);
-    pros::delay(170);
-    wallmotor.move(45);
-    pros::delay(230);
-    wallmotor.move(-40);
-    pros::delay(100);
-    wallmotor.move(0);
-    chassis.moveToPoint(0, 0, 700, {.forwards=false, .maxSpeed = 127}, false);  
-    wallmotor.move(-127);
-
-    //turn towards ring in front of alliance stake, moves to get it, 
-
-    chassis.turnToHeading(-66.2, 700, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 127}); 
-
-    intake_class.set_velocity(0);
-    raiseasdasd.set_value(true);
-
-    // pros::delay(9329432943294932943243);
-    intake_class.set_velocity(127);
-    chassis.moveToPoint(-10.1, 7.3, 700, {.forwards=true, .maxSpeed = 90});  
-    wallmotor.move(-30);
-    pros::delay(700);
-    raiseasdasd.set_value(false);
-    pros::delay(300);
-    intake_class.set_velocity(0);
-    chassis.turnToHeading(18.2, 800, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 70}); 
-    wallmotor.move(0);
-    //move to mogo to clamp, turn towards ring in front of center rings to intake 
-    autoclamp_bool = true;
-    chassis.moveToPoint(-17.8, -21.65, 1000, {.forwards=false, .maxSpeed = 60}, false);
-    autoclamp_bool = false;  
-    chassis.turnToHeading(124, 800, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80}); 
-    //pros::delay(10000);
-    chassis.moveToPoint(-2.5, -45, 900, {.forwards=true, .maxSpeed = 127});  
-    intake_class.set_velocity(127);
-
-    chassis.turnToHeading(45.7, 890, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 40}, false);
-    
-    pros::delay(600);
-
-    chassis.moveToPoint(22.2, -19.7, 600, {.forwards=true, .maxSpeed = 127});  
-    chassis.turnToHeading(0, 60, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 65}, false); 
-
-    intake_class.set_velocity(-127);
-
-    chassis.moveToPoint(17.8, -30.7, 600, {.forwards=false, .maxSpeed = 90});  
-
-    chassis.turnToHeading(85, 600, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80}); 
-
-    chassis.moveToPoint(43, -29.7, 800, {.forwards=true, .maxSpeed = 100}, false);  
-    move(60, 0);
-    pros::delay(200);
-    intake_class.set_velocity(127);
-    pros::delay(700);
-
-    // pros::delay(9394329432493249324923424324324);
-
-    chassis.moveToPoint(15, -31, 700, {.forwards=false, .maxSpeed = 100}, false); 
-
-    chassis.turnToHeading(228, 1200, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 45});
-
-    pros::delay(700);
-
-    clamp.set_value(true); 
-
-
-    pros::delay(500);
-
-    move(80, 0);
-
-    pros::delay(420);
-
-    move(0,0);
-
-    // chassis.moveToPoint(1.9, -44.2 , 700, {.forwards=true, .maxSpeed = 100}); 
-
-    chassis.turnToHeading(407, 1100, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 70});
-
-    pros::delay(100);
-
-    // angle: 
-
-    // move(0.4f, 0.0f);
-
-    // // chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
-
-    // chassis.moveToPoint(33.8, -25.5, 2000, {.forwards=false, .maxSpeed = 75});
-
-    // wallmotor.move(127);
-
-    // pros::delay(160);
-
-    // wallmotor.move_velocity(0);
-}
-
-void RedMogoDoink(){
-    chassis.moveToPoint(0, 42.4, 1000, {.forwards=true, .maxSpeed = 127}, true); 
-    pros::delay(650);
-    doinker.set_value(true);
-    chassis.moveToPoint(0, 35, 500, {.forwards=false, .maxSpeed = 127});
-    // intake_class.set_velocity(127);
-
-}
-
-void BlueRingRush(){
-    // chassis.turnToHeading(-3, 600, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
-    // raiseasdasd.set_value(true);
-    chassis.moveToPoint(0, 40, 300, {.forwards=true, .maxSpeed = 127});
-    doinker.set_value(true);
-    chassis.waitUntilDone(); 
-    move(127, -20.5);
-    pros::delay(530);
-    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
-    move(0,0);
-    // pros::delay((9249244994294242242424));
-    intake_class.set_velocity(127);
-    pros::delay(300);
-    // raiseasdasd.set_value(false);
-    // pros::delay(600);
-    intake_class.set_velocity(0);
-
-    chassis.moveToPoint(1, 27, 600, {.forwards = false, .maxSpeed = 120});
-
-    chassis.waitUntilDone();
-    // pros::delay(1200);
-
-    doinker.set_value(false);
-    
-    chassis.moveToPoint(1, 24, 350, {.forwards = false, .maxSpeed = 80}, false);
-    chassis.turnToHeading(93.2, 500, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 87}); 
-
-    
-    intake_class.set_velocity(20);
-    chassis.moveToPoint(-24.4, 32.3, 1200, {.forwards=false, .maxSpeed = 55}); 
-    // pros::delay(1100);
-    autoclamp_bool = true;
-    // clamp.set_value(false);
-    // autoclamp_bool = true;
-
-    chassis.turnToHeading(80, 600, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 90}); 
-    intake_class.set_velocity(127);
-
-    autoclamp_bool = false;
-    // doinker.set_value(false);
-    chassis.moveToPoint(3, 40.3, 900, {.forwards=true, .maxSpeed = 127}); 
-    intake_class.set_velocity(127);
-    pros::delay(400);
-    chassis.turnToHeading(190, 600, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 95});
-    
-    chassis.moveToPoint(-10, 2, 1600, {.forwards=true, .maxSpeed = 60}); 
-    chassis.moveToPoint(-8, 6, 500, {.forwards=false, .maxSpeed = 85}); 
-
-    chassis.turnToHeading(125, 600, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80});
-    
-    chassis.moveToPoint(11.2, -6.4, 600, {.forwards=true, .maxSpeed = 90}, true);
-    
-    pros::delay(300);
-
-    intake_class.set_velocity(-127);
-
-    chassis.waitUntilDone();
-    move(80, 0);
-    pros::delay(300);
-    intake_class.set_velocity(127);
-    pros::delay(300);
-    // intake_class.set_velocity(0);
-    move(0, 0);
-    chassis.moveToPoint(4.9, 5.9, 500, {.forwards=false, .maxSpeed = 80}, false); 
-    intake.move(-100);
-    pros::delay(100);
-    intake_class.set_velocity(127);
-    chassis.turnToHeading(270, 600, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80});
-    chassis.moveToPoint(-52, 6.8, 1600, {.forwards=true, .maxSpeed = 80}); 
-    pros::delay(500);
-    ladybrown_class.set_angle(targetWait);
-    raiseasdasd.set_value(true);
-    chassis.waitUntilDone();
-    raiseasdasd.set_value(false);
-    chassis.moveToPoint(-50, 8, 1600, {.forwards=false, .maxSpeed = 80}); 
-    // pros::delay(924924449292442444224424);
-    pros::delay(200);
-
-    chassis.turnToHeading(184, 800, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80});
-    ladybrown_class.set_angle(160);
-    chassis.moveToPoint(-51.1, -3.8, 800, {.forwards=true, .maxSpeed = 60}); 
-    ladybrown_class.set_angle(220);
-
-    pros::delay(2949249492492442424);
-
-    chassis.turnToHeading(180, 1000, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80});
-    // autoclamp_bool = false;
-    chassis.moveToPoint(-50, -6.3, 1200, {.forwards=true, .maxSpeed = 50}); 
-    ladybrown_class.set_angle(targetHold);
-    chassis.waitUntilDone();
-    pros::delay(450);
-    intake_class.set_velocity(0);
-    ladybrown_class.set_angle(80);
-
-    move(-55, 0);
-
-    pros::delay(200);
-
-    ladybrown_class.set_angle(150);
-
-    pros::delay(140);
-
-    move(0, 0);
-
-    ladybrown_class.set_angle(170);
-
-    pros::delay(100);
-
-    ladybrown_class.set_angle(220);
-
-    move(20, 0);
-
-    pros::delay(400);
-
-    move(-80,0);
-    pros::delay(101010);
-}
-
-// void BlueDoinkerRush(){
-
-// }
-
-void newBlueRingRush(){
-    // chassis.turnToHeading(-3, 600, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
-    chassis.moveToPoint(0, 40, 300, {.forwards=true, .maxSpeed = 127});
-    doinker.set_value(true);
-    chassis.waitUntilDone(); 
-    move(127, -18);
-    pros::delay(530);
-    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
-    move(0,0);
-    // pros::delay((9249244994294242242424));
-    intake_class.set_velocity(127);
-    // pros::delay(300);
-    // raiseasdasd.set_value(false);
-    // pros::delay(600);
-
-    chassis.moveToPoint(1, 27, 600, {.forwards = false, .maxSpeed = 120});
-
-    pros::delay(300);
-
-    intake_class.set_velocity(0);
-
-    chassis.waitUntilDone();
-    // pros::delay(1200);
-
-    doinker.set_value(false);
-    
-    chassis.moveToPoint(1, 24, 350, {.forwards = false, .maxSpeed = 80}, false);
-    chassis.turnToHeading(90, 500, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 87}); 
-
-    
-    intake_class.set_velocity(20);
-    chassis.moveToPoint(-24.4, 32.3, 1200, {.forwards=false, .maxSpeed = 62.5}); 
-    // pros::delay(1100);
-    autoclamp_bool = true;
-    // clamp.set_value(false);
-    // autoclamp_bool = true;
-
-    chassis.turnToHeading(80, 600, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 90}); 
-    intake_class.set_velocity(127);
-
-    chassis.waitUntilDone();
-
-    autoclamp_bool = false;
-    // doinker.set_value(false);
-    chassis.moveToPoint(3, 43.3, 900, {.forwards=true, .maxSpeed = 127}); 
-    intake_class.set_velocity(127);
-    pros::delay(400);
-    chassis.turnToHeading(190, 600, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 95});
-    
-    chassis.moveToPoint(-10, 2, 1000, {.forwards=true, .maxSpeed = 80}); 
-    chassis.moveToPoint(-8, 6, 500, {.forwards=false, .maxSpeed = 85}); 
-
-    chassis.turnToHeading(125, 600, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60});
-    
-    chassis.moveToPoint(11.2, -6.4, 600, {.forwards=true, .maxSpeed = 90}, true);
-    
-    pros::delay(300);
-
-    intake_class.set_velocity(-127);
-
-    chassis.waitUntilDone();
-    move(80, 0);
-    pros::delay(300);
-    intake_class.set_velocity(127);
-    pros::delay(300);
-    // intake_class.set_velocity(0);
-    move(0, 0);
-    ladybrown_class.set_angle(targetWait);
-    chassis.moveToPoint(4.9, 5.9, 500, {.forwards=false, .maxSpeed = 80}, false); 
-    intake.move(-100);
-    pros::delay(100);
-    intake_class.set_velocity(127);
-    chassis.turnToHeading(270, 600, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80});
-    chassis.moveToPoint(-52, 6.8, 1600, {.forwards=true, .maxSpeed = 80}); 
-    pros::delay(500);
-    raiseasdasd.set_value(true);
-    pros::delay(400);
-    ladybrown_class.set_angle(targetHold);
-    pros::delay(300);
-    raiseasdasd.set_value(false);
-    chassis.moveToPoint(-50, 8, 850, {.forwards=false, .maxSpeed = 80}); 
-    // pros::delay(924924449292442444224424);
-    // pros::delay(200);
-    chassis.turnToHeading(180, 770, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 70});
-    leftdoinker.set_value(true);
-    doinkerclamp.set_value(true);
-    intake_class.set_velocity(-20);
-    // ladybrown_class.set_angle(170);
-
-    chassis.waitUntilDone();
-
-    leftdoinker.set_value(false);
-
-    chassis.moveToPoint(-50, -3, 450, {.forwards=true, .maxSpeed = 60}, false); 
-
-    move(60, 0);
-
-    pros::delay(500);
-
-    intake_class.set_velocity(0);
-    ladybrown_class.set_angle(80);
-
-    move(-65, 0);
-
-    pros::delay(185);
-
-    ladybrown_class.set_angle(150);
-
-    pros::delay(120);
-
-    move(0, 0);
-
-    ladybrown_class.set_angle(170);
-
-    pros::delay(100);
-
-    ladybrown_class.set_angle(220);
-
-    move(20, 0);
-
-    pros::delay(400);
-
-    pros::delay(200);
-    intake_class.set_velocity(0);
-    doinker.set_value(false);
-    pros::delay(150);
-    ladybrown_class.set_angle(205);
-    pros::delay(300);
-    move(-60, 0);
-    pros::delay(200);
-    move(0,0);
-}
-
-    void MirrorBlueRingRush(){
-    // chassis.turnToHeading(-3, 600, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
-    chassis.moveToPoint(0, 40, 300, {.forwards=true, .maxSpeed = 127});
-    doinker.set_value(true);
-    chassis.waitUntilDone(); 
-    move(127, -18);
-    pros::delay(530);
-    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
-    move(0,0);
-    // pros::delay((9249244994294242242424));
-    intake_class.set_velocity(127);
-    // pros::delay(300);
-    // raiseasdasd.set_value(false);
-    // pros::delay(600);
-
-    chassis.moveToPoint(-1, 27, 600, {.forwards = false, .maxSpeed = 120});
-
-    chassis.waitUntilDone();
-    intake_class.set_velocity(0);
-    // pros::delay(1200);
-
-    doinker.set_value(false);
-    
-    chassis.moveToPoint(-1, 24, 350, {.forwards = false, .maxSpeed = 80}, false);
-    chassis.turnToHeading(-93.2, 500, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 87}); 
-
-    
-    intake_class.set_velocity(20);
-    chassis.moveToPoint(24.4, 32.3, 1200, {.forwards=false, .maxSpeed = 62.5}); 
-    // pros::delay(1100);
-    autoclamp_bool = true;
-    // clamp.set_value(false);
-    // autoclamp_bool = true;
-
-    chassis.turnToHeading(-80, 600, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 90}); 
-    intake_class.set_velocity(127);
-
-    chassis.waitUntilDone();
-
-    autoclamp_bool = false;
-    // doinker.set_value(false);
-    chassis.moveToPoint(-3, 43.3, 900, {.forwards=true, .maxSpeed = 127}); 
-    intake_class.set_velocity(127);
-    pros::delay(400);
-    chassis.turnToHeading(-190, 600, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 95});
-    
-    chassis.moveToPoint(10, 2, 1000, {.forwards=true, .maxSpeed = 80}); 
-    chassis.moveToPoint(8, 6, 500, {.forwards=false, .maxSpeed = 85}); 
-
-    chassis.turnToHeading(-125, 600, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 60});
-    
-    chassis.moveToPoint(-11.2, -6.4, 600, {.forwards=true, .maxSpeed = 90}, true);
-    
-    pros::delay(300);
-
-    intake_class.set_velocity(-127);
-
-    chassis.waitUntilDone();
-    move(80, 0);
-    pros::delay(300);
-    intake_class.set_velocity(127);
-    pros::delay(300);
-    // intake_class.set_velocity(0);
-    move(0, 0);
-    chassis.moveToPoint(-4.9, 5.9, 500, {.forwards=false, .maxSpeed = 80}, false); 
-    intake.move(-100);
-    pros::delay(100);
-    intake_class.set_velocity(127);
-    chassis.turnToHeading(-270, 600, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80});
-    chassis.moveToPoint(52, 6.8, 1600, {.forwards=true, .maxSpeed = 80}); 
-    pros::delay(500);
-    ladybrown_class.set_angle(targetWait);
-    raiseasdasd.set_value(true);
-    pros::delay(700);
-    raiseasdasd.set_value(false);
-    chassis.moveToPoint(50, 8, 850, {.forwards=false, .maxSpeed = 80}); 
-    // pros::delay(924924449292442444224424);
-    // pros::delay(200);
-    chassis.turnToHeading(-180, 770, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 70});
-    doinker.set_value(true);
-    intake_class.set_velocity(-20);
-    // ladybrown_class.set_angle(170);
-
-    chassis.waitUntilDone();
-
-    doinker.set_value(false);
-
-    chassis.moveToPoint(50, -3, 450, {.forwards=true, .maxSpeed = 60}, false); 
-
-    move(60, 0);
-
-    pros::delay(500);
-
-    intake_class.set_velocity(0);
-    ladybrown_class.set_angle(80);
-
-    move(-65, 0);
-
-    pros::delay(185);
-
-    ladybrown_class.set_angle(150);
-
-    pros::delay(120);
-
-    move(0, 0);
-
-    ladybrown_class.set_angle(170);
-
-    pros::delay(100);
-
-    ladybrown_class.set_angle(220);
-
-    move(20, 0);
-
-    pros::delay(400);
-
-    pros::delay(200);
-    intake_class.set_velocity(0);
-    doinker.set_value(false);
-    pros::delay(150);
-    ladybrown_class.set_angle(205);
-    pros::delay(300);
-    move(-60, 0);
-    pros::delay(200);
-    move(0,0);
-}
-
-void RedMogoRush(){
-    chassis.setPose(0, -8, 0);
-    ladybrown_class.set_angle(150);
-    intake_class.set_velocity(127);
-    chassis.moveToPoint(0, 41.55, 1500, {.forwards=true, .maxSpeed = 90}); 
-    pros::delay(1200);
-    ladybrown_class.set_angle(240);
-    chassis.moveToPoint(0, 28.5, 700, {.forwards=false, .maxSpeed = 90});
-    ladybrown_class.set_angle(-40);
-    chassis.turnToHeading(-97.7, 800, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80});
-    chassis.moveToPoint(23.6, 32.3, 900, {.forwards=false, .maxSpeed = 72}); 
-    autoclamp_bool = true;
-    wallrot.set_position(0);
-    ladybrown_class.set_angle(0);
-    chassis.turnToHeading(-135, 800, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80});
-    intake_class.set_velocity(127);
-    autoclamp_bool = false;
-    chassis.moveToPoint(-9.8, -2.3, 1400, {.forwards=true, .maxSpeed = 70}); 
-    chassis.waitUntilDone();
-    intake_class.set_velocity(-127);
-    move(80, 0);
-    pros::delay(300);
-    intake_class.set_velocity(127);
-    pros::delay(300);
-    // intake_class.set_velocity(0);
-    move(0, 0);
-    chassis.moveToPoint(0, 8.1, 1200, {.forwards=false, .maxSpeed = 90});
-    chassis.turnToHeading(-271, 800, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80});
-    chassis.moveToPoint(52, 6.8, 1700, {.forwards=true, .maxSpeed = 50});
-    raiseasdasd.set_value(true);
-    ladybrown_class.set_angle(targetWait);
-    chassis.waitUntilDone();
-    doinker.set_value(true);
-    chassis.turnToHeading(-180, 1200, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 70});
-    chassis.waitUntilDone();
-    doinker.set_value(false);
-
-    move(50, 0);
-
-    pros::delay(500);
-
-    move(-55, 0);
-
-    pros::delay(200);
-
-    ladybrown_class.set_angle(150);
-
-    pros::delay(140);
-
-    move(0, 0);
-
-    ladybrown_class.set_angle(170);
-
-    pros::delay(100);
-
-    ladybrown_class.set_angle(220);
-
-    move(20, 0);
-
-    pros::delay(400);
-
-    
-}
-
-void RedRingRush(){
-    chassis.moveToPoint(-2, 36, 1000, {.forwards=true, .maxSpeed = 127}); 
-    doinker.set_value(true);
-    intake_class.set_velocity(127);
-    pros::delay(500);
-    intake_class.set_velocity(0);
-
-    chassis.moveToPoint(-2, 29, 1200, {.forwards = false, .maxSpeed = 80});
-
-    // pros::delay(129492191292112122122);
-
-    chassis.turnToHeading(-102, 600, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
-
-    doinker.set_value(false);
-    intake_class.set_velocity(40);
-    chassis.moveToPoint(17.3, 30.3, 1000, {.forwards=false, .maxSpeed = 60}); 
-    pros::delay(700);
-    clamp.set_value(false);
-    intake_class.set_velocity(127);
-    // autoclamp_bool = true;
-
-    chassis.turnToHeading(-60, 600, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80}); 
-    // doinker.set_value(false);
-    chassis.moveToPoint(3, 38, 500, {.forwards=true, .maxSpeed = 60}); 
-    intake_class.set_velocity(127);
-
-    chassis.moveToPoint(16.2, 29.9, 500, {.forwards=true, .maxSpeed = 60}); 
-
-    chassis.turnToHeading(-137, 600, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80});
-    
-    chassis.moveToPoint(-13.4, -5.6, 1600, {.forwards=true, .maxSpeed = 60}); 
-
-    chassis.moveToPoint(-9.5, -1.5, 1600, {.forwards=false, .maxSpeed = 60}); 
-
-    chassis.turnToHeading(-261, 600, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80});
-
-    ladybrown_class.set_angle(targetHold);
-    
-    chassis.moveToPoint(-8.7, -5.6, 1600, {.forwards=true, .maxSpeed = 60}); 
-    // autoclamp_bool = false;
-
-}
-
 
 void soloWP(){
-    ladybrown_class.set_angle(110);
-    chassis.moveToPoint(0, 8.9, 700, {.forwards=true, .maxSpeed = 80}, false); 
-    ladybrown_class.set_angle(180);
-    pros::delay(300);
-    chassis.moveToPoint(0, -6.7, 700, {.forwards=false, .maxSpeed = 80}); 
-    pros::delay(200);
-    ladybrown_class.set_angle(-30);
-    chassis.turnToHeading(-41, 600, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
-    chassis.moveToPoint(16.3, -25.3, 300, {.forwards=false, .maxSpeed = 80}); 
-    chassis.moveToPoint(16.3, -25.3, 800, {.forwards=false, .maxSpeed = 50}); 
-    autoclamp_bool = true;
-    // pros::delay(510);
-    // clamp.set_value(false);
-    chassis.turnToHeading(-135, 600, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80});
-    autoclamp_bool = false; 
-    chassis.moveToPoint(2, -43, 900, {.forwards=true, .maxSpeed = 90}); 
-    intake_class.set_velocity(127);
-    chassis.waitUntilDone();
-    pros::delay(200);
-    chassis.turnToHeading(17, 600, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80}); 
-    chassis.moveToPoint(20.4, 12.8, 2750, {.forwards=true, .maxSpeed = 70}); 
-    raiseasdasd.set_value(true);
-    pros::delay(1550);
-    raiseasdasd.set_value(false);
-
-    pros::delay(1000);
-
+    ladybrown_slow = true;
+    ladybrown_class.set_angle(155);
+    ladybrown_slow = false;
+    autoclamp_bool = false;
+    clamp.set_value(false);
+    pros::delay(600);
+    chassis.moveToPoint(0, -7, 500);
+    chassis.turnToHeading(-52,600);
+    chassis.moveToPoint(18.6, -25.9, 600, {.forwards=false, .earlyExitRange = 8});  
+    chassis.moveToPoint(25, -31.8, 600, {.forwards=false, .maxSpeed = 60});  
+    pros::delay(500);
     clamp.set_value(true);
-
-    chassis.turnToHeading(41, 600, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80}); 
-    chassis.moveToPoint(51.4, 47.6, 1500, {.forwards=true, .maxSpeed = 70}); 
-
-    chassis.turnToHeading(-5, 600, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
-
-    chassis.moveToPoint(50.6, 64.7, 400, {.forwards=true, .maxSpeed = 100});
-    chassis.moveToPoint(50.6, 64.7, 600, {.forwards=true, .maxSpeed = 40});
-    intake_class.set_velocity(-80);
+    ladybrown_class.set_angle(-200);
+    chassis.turnToHeading(-144,600);
+    pros::delay(600);
+    wallrot.set_position(0);
+    ladybrown_class.set_angle(0);
+    intake_class.set_velocity(127);
+    chassis.moveToPoint(13.7, -55.1, 1100);
+    chassis.turnToHeading(-81.9,600);
+    chassis.moveToPoint(-28,-43.5 , 1100);
     chassis.waitUntilDone();
-    move(50, 0);
-    intake_class.set_velocity(127);
-    
-    intake_class.set_velocity(127);
+    move(127, 0);
+    pros::delay(700);
+    chassis.moveToPoint(2.7, -44.7, 800, {.forwards=false, .maxSpeed = 127}, false);
+    chassis.turnToHeading(10,600);
+    chassis.moveToPoint(22.6,-2.4 , 1100);
+    pros::delay(500);
+    clamp.set_value(false);
+    chassis.moveToPoint(23.9,14 , 1100, { .maxSpeed = 90});
+    pros::delay(200);
+    intake_class.set_velocity(0);
+    chassis.turnToHeading(-82, 600);
+    chassis.moveToPoint(43.6, 10, 600, {.forwards=false, .earlyExitRange = 8});  
+    // chassis.moveToPoint(, -31.8, 600, {.forwards=false, .maxSpeed = 60});  
 
-    // pros::delay(1600);
-    pros::delay(9424924924242424242424);
-    // clamp.set_value(true);
-    // chassis.turnToHeading(-86, 600, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
-    // chassis.moveToPoint(49.8, 10.8, 1300, {.forwards=false, .maxSpeed = 70}); 
-    // intake_class.set_velocity(0);
-    // pros::delay(750);
-    // clamp.set_value(false);
-    // chassis.turnToHeading(47.8, 600, {.direction=lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = 80}); 
-    // intake_class.set_velocity(127);
-    // chassis.moveToPoint(79, 30.6, 1300, {.forwards=true, .maxSpeed = 70}); 
-    // // chassis.moveToPoint(73, 34, 1300, {.forwards=false, .maxSpeed = 70}); 
-    // pros::delay(600);
-    // chassis.turnToHeading(-30, 600, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 80}); 
-    // intake_class.set_velocity(0);
-    // chassis.moveToPoint(54.5, 63.9, 900, {.forwards=true, .maxSpeed = 200}); 
-    // pros::delay(300);
-    // intake_class.set_velocity(-50);
-    // pros::delay(600);
-    // move(30, 0);
-    // pros::delay(150);
-    // intake_class.set_velocity(127);
-    // autoclamp_bool=true;
+
+
+
+
+
+
+
+
+ 
+
+    // chassis.turnToHeading(45,600,{},false);
+    //
+
+
+
+
+
+
+
+
+
     
 }
+
 
 void autonomous() {
 
@@ -2267,28 +464,24 @@ void autonomous() {
 
     doinker.set_value(false);
     //clamp.set_value
-    left_front_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-    left_back_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-    left_center_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-    right_front_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-    right_back_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-    right_center_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+
+    left_front_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    left_back_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    left_center_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    right_front_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    right_back_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    right_center_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+
+    // left_front_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    // left_back_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    // left_center_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    // right_front_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    // right_back_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    // right_center_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 
     hangs.set_value(false);
     intake_class.maxTorque=0.35;
-    // BlueRingC();
-    // BlueRingL();
-    // RedRingL();
-    // RedMogo();
-    // RedMogoELIM();
-    //BlueMogoELIM();
-    // soloWP();
-    // RedRingRush();
-    // MirrorBlueRingRush();
-    newBlueRingRush();
-    // BlueDoinkerRush();
-    // skillsAuton();
-    // RedMogoDoink();
+
 
     // clamp.set_value(true);
     // switch (autonRunning) {
@@ -2304,76 +497,32 @@ void autonomous() {
     //         skillsAutonStatesWallStakes();
     // }
 
-    // BlueMogoELIM();
-    // MirrorBlueRingRush();
-    // skillsAutonStatesWallStakes();
-    
-    //RedMogoRush();
-    // BlueRingRush();
-    // BlueRingRush();
-    // autoclamp_bool = true;
-    // skillsAutonWallStakes();
-
-    // intake_class.set_velocity(127);
-
-    // pros::delay(5000);
-
-    // clamp.set_value(false);
-
-    // chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
-
-    // chassis.moveToPoint(0, 24, 700, {.forwards=true, .maxSpeed = 100});
-
-    // chassis.turnToHeading(180, 1000, {.maxSpeed = 100});
-
-    // drivetrain.
-    // chassis.setPose(0, 0, 0);
-
-    // bluehighscore();
-    // newbluemogoside();
-    // redhighscore();
-    // newredmogoside();
-
-    // bluemogo();
-    // redmogo();
-    // bluemogo2();
-    // redmogo2();
-    // redmogo3();
-    //blueelim();
-// 
-    // chassis.turnToHeading(90, 3000, {.maxSpeed=127});
-
-    // bluMogoG();
-
-
-    // pros::delay(1000);
-    
-    // chassis.turnToHeading(180, 100000);
     // pros::task_t my_task = task_create(pidUpdate, (void*)"PROS", TASK_PRIORITY_DEFAULT,
     //                            TASK_STACK_DEPTH_DEFAULT, "My Task");
     // pros::Task my_cpp_task (my_task);
 }
 
-void newDrive() {
-    //left joystick - forward and back
-    //right joystick - left and right
-    //check what the voltage is and output
-
-}
-
 void opcontrol() {
     pros::delay(50);
-    // wallrot.set_position(0);
+    wallrot.set_position(0);
     bool doinker_state = false;
     bool doinker_button = false;
     doinker.set_value(false);
 
-    left_front_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-    left_back_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-    left_center_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-    right_front_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-    right_back_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-    right_center_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    // left_front_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    // left_back_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    // left_center_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    // right_front_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    // right_back_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    // right_center_motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+
+    left_front_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    left_back_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    left_center_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    right_front_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    right_back_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    right_center_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+
     wallmotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     // wallstage = 4;
     int timer = 0;
@@ -2406,245 +555,247 @@ void opcontrol() {
 
     badcolor = BLUE;
 
-	while (true) {
-        int power = master.get_analog(ANALOG_LEFT_Y) * (1-0.6*speedbool);
-        int turn = master.get_analog(ANALOG_RIGHT_X);
-        bool manualswitch = false;
-        wallmotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    soloWP();
 
-        if(manualswitch){
-            manual = !manual;
-        }
+	// while (true) {
+    //     int power = master.get_analog(ANALOG_LEFT_Y) * (1-0.6*speedbool);
+    //     int turn = master.get_analog(ANALOG_RIGHT_X);
+    //     bool manualswitch = false;
+    //     wallmotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 
-        bool outtakebutton = master.get_digital_new_press(DIGITAL_X);
-        bool intakebutton = master.get_digital_new_press(DIGITAL_Y);
-        bool wallcycler = master.get_digital_new_press(DIGITAL_L1);
-        bool wallreturn = master.get_digital_new_press(DIGITAL_L2);
-        bool wallMid = master.get_digital_new_press(DIGITAL_B);
-        bool wallDown = master.get_digital_new_press(DIGITAL_DOWN);
-        bool returnLB = master.get_digital_new_press(DIGITAL_RIGHT);
-        bool rightBackHold = master.get_digital(DIGITAL_R2);       // bool rightfront = master.get_digital_new_press(DIGITAL_R1);
-        bool upbutton = master.get_digital_new_press(DIGITAL_UP);
-        bool RB = master.get_digital_new_press(DIGITAL_R2);
+    //     if(manualswitch){
+    //         manual = !manual;
+    //     }
 
-        if (RB){
-            raised = !raised;
-            raiseasdasd.set_value(raised);
-        }
+    //     bool outtakebutton = master.get_digital_new_press(DIGITAL_X);
+    //     bool intakebutton = master.get_digital_new_press(DIGITAL_Y);
+    //     bool wallcycler = master.get_digital_new_press(DIGITAL_L1);
+    //     bool wallreturn = master.get_digital_new_press(DIGITAL_L2);
+    //     bool wallMid = master.get_digital_new_press(DIGITAL_B);
+    //     bool wallDown = master.get_digital_new_press(DIGITAL_DOWN);
+    //     bool returnLB = master.get_digital_new_press(DIGITAL_RIGHT);
+    //     bool rightBackHold = master.get_digital(DIGITAL_R2);       // bool rightfront = master.get_digital_new_press(DIGITAL_R1);
+    //     bool upbutton = master.get_digital_new_press(DIGITAL_UP);
+    //     bool RB = master.get_digital_new_press(DIGITAL_R2);
 
-        // if (rightBackHold){
-        //     colorsortdrivercounter++;
-        // } else{
-        //     colorsortdrivercounter = 0;
-        // }
+    //     if (RB){
+    //         raised = !raised;
+    //         raiseasdasd.set_value(raised);
+    //     }
 
-        // if (upbutton){
-        //     badcolor = bad_color ? badcolor != DRIVER : DRIVER;
-        // }
+    //     // if (rightBackHold){
+    //     //     colorsortdrivercounter++;
+    //     // } else{
+    //     //     colorsortdrivercounter = 0;
+    //     // }
 
-        // if (colorsortdrivercounter > 50){
-        //     badcolor = bad_color ? badcolor != DRIVER : DRIVER;
-        //     colorsortdrivercounter = 0;
-        //     master.rumble("...");
-        //     rumblecounter = 1;
-        //     // master.set_text(3, 0, "..");
-        // }
+    //     // if (upbutton){
+    //     //     badcolor = bad_color ? badcolor != DRIVER : DRIVER;
+    //     // }
 
-        // if (rumblecounter > 0){
-        //     rumblecounter++;
-        // }
-        // else if (rumblecounter > 20){
-        //     rumblecounter = 0;
-        // }
+    //     // if (colorsortdrivercounter > 50){
+    //     //     badcolor = bad_color ? badcolor != DRIVER : DRIVER;
+    //     //     colorsortdrivercounter = 0;
+    //     //     master.rumble("...");
+    //     //     rumblecounter = 1;
+    //     //     // master.set_text(3, 0, "..");
+    //     // }
 
-        // if (rightBack){
-        //     raised = !raised;
-        //     raiseasdasd.set_value(raised);
-        // }
+    //     // if (rumblecounter > 0){
+    //     //     rumblecounter++;
+    //     // }
+    //     // else if (rumblecounter > 20){
+    //     //     rumblecounter = 0;
+    //     // }
 
-        // if (upbutton){
-        //     speedbool = !speedbool;
-        // }
+    //     // if (rightBack){
+    //     //     raised = !raised;
+    //     //     raiseasdasd.set_value(raised);
+    //     // }
 
-        bool leftClamp = master.get_digital_new_press(DIGITAL_LEFT);
+    //     // if (upbutton){
+    //     //     speedbool = !speedbool;
+    //     // }
 
-        if (leftClamp){
-            ladybrown_manual.store(false);
-            ladybrown_class.set_angle(190);
-            pros::delay(500);
-            move(-80, 0);
-            // returnLB = true;
-            ladybrown_class.set_angle(0);
-            autoclamp_bool = true;
-            pros::delay(700);
-            autoclamp_bool = false;
-            move(0,0);
-            // chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
-            // pros::delay(200);
-            // chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
-            returnLB = true;
-            // chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
-            // clamp.set_value(true);
-            // intake_class.set_velocity(127);
-            // pros::delay(700);
-            // intake_class.set_velocity(0);
-            // pros::delay(200);
-            // chassis.moveToPoint(0, 12, 500, {.forwards=true, .maxSpeed = 80});
-            // chassis.turnToHeading(-89, 550, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 55});
-            // chassis.moveToPoint(21, 13, 700, {.forwards=false, .maxSpeed = 80});
-            // pros::delay(600);
-            // clamp.set_value(false);
-            // ladybrown_manual = false;
-        }
-        if(returnLB){
-            ladybrown_manual.store(true);
-            wallmotor.move(-127);
-            pros::delay(400);
-            wallrot.reset_position();
-            wallmotor.move(0);
-            ladybrown_manual.store(false);
-        }
+    //     bool leftClamp = master.get_digital_new_press(DIGITAL_LEFT);
+
+    //     if (leftClamp){
+    //         ladybrown_manual.store(false);
+    //         ladybrown_class.set_angle(190);
+    //         pros::delay(500);
+    //         move(-80, 0);
+    //         // returnLB = true;
+    //         ladybrown_class.set_angle(0);
+    //         autoclamp_bool = true;
+    //         pros::delay(700);
+    //         autoclamp_bool = false;
+    //         move(0,0);
+    //         // chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
+    //         // pros::delay(200);
+    //         // chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
+    //         returnLB = true;
+    //         // chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
+    //         // clamp.set_value(true);
+    //         // intake_class.set_velocity(127);
+    //         // pros::delay(700);
+    //         // intake_class.set_velocity(0);
+    //         // pros::delay(200);
+    //         // chassis.moveToPoint(0, 12, 500, {.forwards=true, .maxSpeed = 80});
+    //         // chassis.turnToHeading(-89, 550, {.direction=lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 55});
+    //         // chassis.moveToPoint(21, 13, 700, {.forwards=false, .maxSpeed = 80});
+    //         // pros::delay(600);
+    //         // clamp.set_value(false);
+    //         // ladybrown_manual = false;
+    //     }
+    //     if(returnLB){
+    //         ladybrown_manual.store(true);
+    //         wallmotor.move(-127);
+    //         pros::delay(400);
+    //         wallrot.reset_position();
+    //         wallmotor.move(0);
+    //         ladybrown_manual.store(false);
+    //     }
         
-        pos = wallrot.get_position()/100.0f;
-        err = targetpos - pos;
-        float derr = err-preverr;
-        sumerrorwall += err;
-        float ret = pwall * err + iwall * sumerrorwall + dwall * derr;
-        if(manual){goto skp;}
-        // wallmotor.move((ret * 127) > 127 ? 127 : (ret*127));
-        // bool yesredirect = master.get_digital(DIGITAL_L1);
-        // bool notredirect = master.get_digital(DIGITAL_L2);
-
-        
-        if(wallcycler && !lastCycle){
-            if(stage == 4){
-                stage = 2;
-            goto skprest;
-            }
-            stage = ((stage <= 1) ? stage+1 : 1);
-            skprest:
-            if(stage == 2){
-                intaking = false;
-                outtaking = false;
-                intake_class.set_velocity(-127);
-                pros::delay(50);
-                intake_class.set_velocity(0);
-            }
-        }
-        
-        if(wallDown) {
-            intake.move(0);
-            intaking = false;
-            outtaking = false;
-            chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
-            move(-70, 0);
-            pros::delay(150);
-            move(0, 0);
-            pros::delay(100);
-            chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
-            //moveDown = false;
-            if(stage != 3){
-                //moveDown = true;
-            }
-            stage = (stage != 3) ? 3 : 0;
-            sumerrorwall = 0.0f;
-        }
-        if(wallMid) {
-            moveDown = false;
-            if(stage != 4){
-                intake_class.releasedMogo += 40;
-            }
-            stage = (stage != 4) ? 4 : 0;
-            sumerrorwall = 0.0f;
-            intaking = false;
-            outtaking = false;
-            intake_class.set_velocity(-127);
-            pros::delay(50);
-            intake_class.set_velocity(0);
-        }
-        if(wallcycler || wallreturn){
-            moveDown = false;
-            sumerrorwall = 0.0f;
-        }
-        if(wallreturn){
-            moveDown = false;
-            sumerrorwall = 0.0f;
-            stage = 0;
-        }
-        // if(fabs(wallrot.get_angle() % 360) < 3.0f){
-        //     wallrot.set_position(0);
-        // }
+    //     pos = wallrot.get_position()/100.0f;
+    //     err = targetpos - pos;
+    //     float derr = err-preverr;
+    //     sumerrorwall += err;
+    //     float ret = pwall * err + iwall * sumerrorwall + dwall * derr;
+    //     if(manual){goto skp;}
+    //     // wallmotor.move((ret * 127) > 127 ? 127 : (ret*127));
+    //     // bool yesredirect = master.get_digital(DIGITAL_L1);
+    //     // bool notredirect = master.get_digital(DIGITAL_L2);
 
         
-
-        targetpos = (stage == 1) * targetWait + (stage == 2) * targetTop + (stage == 3) * targetDown + (stage == 4) * targetHold;
+    //     if(wallcycler && !lastCycle){
+    //         if(stage == 4){
+    //             stage = 2;
+    //         goto skprest;
+    //         }
+    //         stage = ((stage <= 1) ? stage+1 : 1);
+    //         skprest:
+    //         if(stage == 2){
+    //             intaking = false;
+    //             outtaking = false;
+    //             intake_class.set_velocity(-127);
+    //             pros::delay(50);
+    //             intake_class.set_velocity(0);
+    //         }
+    //     }
         
-        ladybrown_class.set_angle(targetpos);
-        goto skp2;
+    //     if(wallDown) {
+    //         intake.move(0);
+    //         intaking = false;
+    //         outtaking = false;
+    //         chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
+    //         move(-70, 0);
+    //         pros::delay(150);
+    //         move(0, 0);
+    //         pros::delay(100);
+    //         chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
+    //         //moveDown = false;
+    //         if(stage != 3){
+    //             //moveDown = true;
+    //         }
+    //         stage = (stage != 3) ? 3 : 0;
+    //         sumerrorwall = 0.0f;
+    //     }
+    //     if(wallMid) {
+    //         moveDown = false;
+    //         if(stage != 4){
+    //             intake_class.releasedMogo += 40;
+    //         }
+    //         stage = (stage != 4) ? 4 : 0;
+    //         sumerrorwall = 0.0f;
+    //         intaking = false;
+    //         outtaking = false;
+    //         intake_class.set_velocity(-127);
+    //         pros::delay(50);
+    //         intake_class.set_velocity(0);
+    //     }
+    //     if(wallcycler || wallreturn){
+    //         moveDown = false;
+    //         sumerrorwall = 0.0f;
+    //     }
+    //     if(wallreturn){
+    //         moveDown = false;
+    //         sumerrorwall = 0.0f;
+    //         stage = 0;
+    //     }
+    //     // if(fabs(wallrot.get_angle() % 360) < 3.0f){
+    //     //     wallrot.set_position(0);
+    //     // }
+
         
-        skp:;
 
-        skp2:;
-
-        bool clampbutton = master.get_digital_new_press(DIGITAL_R1);
-
-        doinker_button = master.get_digital_new_press(DIGITAL_A);
-
-        if(clampbutton){
-            clamped2 = !clamped2;
-            clamp.set_value(clamped2);
-            if(clamped2){
-                intake_class.releasedMogo+=40;
-            }
-        }
-
-        // if(master.get_digital_new_press(DIGITAL_UP)){
-        // }
-
-        if(doinker_button){
-            doinker_state = !doinker_state;
-            doinker.set_value(doinker_state);
-        }   
+    //     targetpos = (stage == 1) * targetWait + (stage == 2) * targetTop + (stage == 3) * targetDown + (stage == 4) * targetHold;
         
-        // if (upbutton){
-        //     badcolor = bad_color ? badcolor != DRIVER : DRIVER;
-        // }
-
-        // if (!clamped2){
-        //     master.set_text(3, 0, ".");
-        // }
-        else{
-            master.set_text(3, 0, "");
-        }
+    //     ladybrown_class.set_angle(targetpos);
+    //     goto skp2;
         
-        chassis.arcade(power, turn);
+    //     skp:;
 
-        if (intakebutton){
-            outtaking = false;
-            intaking = !intaking; 
-        }
-        else if (outtakebutton){
-            intaking = false;
-            outtaking = !outtaking;
-        }
+    //     skp2:;
 
-        if (stage == 1){
-            intake_class.maxTorque = 0.5;
-        }
-        else {
-            intake_class.maxTorque = 0.5;
-        }
-        if (outtaking){
-            intake_class.set_velocity(127);
-            intake2.move(127);
-        }
-        if (intaking){
-            intake_class.set_velocity(-127);
-            intake2.move(-127);
-        }
-        if(!intaking && !outtaking){
-            intake_class.set_velocity(0);
-            intake2.move(0);
-        }
-    }
+    //     bool clampbutton = master.get_digital_new_press(DIGITAL_R1);
+
+    //     doinker_button = master.get_digital_new_press(DIGITAL_A);
+
+    //     if(clampbutton){
+    //         clamped2 = !clamped2;
+    //         clamp.set_value(clamped2);
+    //         if(clamped2){
+    //             intake_class.releasedMogo+=40;
+    //         }
+    //     }
+
+    //     // if(master.get_digital_new_press(DIGITAL_UP)){
+    //     // }
+
+    //     if(doinker_button){
+    //         doinker_state = !doinker_state;
+    //         doinker.set_value(doinker_state);
+    //     }   
+        
+    //     // if (upbutton){
+    //     //     badcolor = bad_color ? badcolor != DRIVER : DRIVER;
+    //     // }
+
+    //     // if (!clamped2){
+    //     //     master.set_text(3, 0, ".");
+    //     // }
+    //     else{
+    //         master.set_text(3, 0, "");
+    //     }
+        
+    //     chassis.arcade(power, turn);
+
+    //     if (intakebutton){
+    //         outtaking = false;
+    //         intaking = !intaking; 
+    //     }
+    //     else if (outtakebutton){
+    //         intaking = false;
+    //         outtaking = !outtaking;
+    //     }
+
+    //     if (stage == 1){
+    //         intake_class.maxTorque = 0.5;
+    //     }
+    //     else {
+    //         intake_class.maxTorque = 0.5;
+    //     }
+    //     if (outtaking){
+    //         intake_class.set_velocity(127);
+    //         intake2.move(127);
+    //     }
+    //     if (intaking){
+    //         intake_class.set_velocity(-127);
+    //         intake2.move(-127);
+    //     }
+    //     if(!intaking && !outtaking){
+    //         intake_class.set_velocity(0);
+    //         intake2.move(0);
+    //     }
+    // }
 }
