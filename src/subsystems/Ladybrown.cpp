@@ -20,9 +20,9 @@ inline float fabsf(const float i){
 
 double Ladybrown::get_velocity(bool isDown){
     printf("cur %f target %f \n", cur_angle, target_angle);
-    return((0.02f*127*(target_angle-cur_angle) 
-    + 0.005f*(prev_angle-cur_angle))> 127 
+    return((0.025f*127*(target_angle-cur_angle) 
+    + 0.01f*(prev_angle-cur_angle))> 127 
     ? 127 : (0.02f*127*(target_angle-cur_angle) 
-    + 0.005f*(prev_angle-cur_angle))) * (isDown ? 0.5f : 1.0f);
+    + 0.01f*(prev_angle-cur_angle))) * (isDown ? 0.5f : 1.0f);
 }
 

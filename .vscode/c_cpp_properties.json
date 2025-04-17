@@ -5,7 +5,8 @@
       "includePath": [
         "${workspaceFolder}/**",
         "/Users/guneetkapur/VEX 24-25/7405M-2024-25/include",
-        "/Users/adityamittal/Coding Projects/7405M-2024-25/include"
+        "/Users/adityamittal/Coding Projects/7405M-2024-25/include",
+        "/Users/guneetkapur/Downloads/7405M-2024-25/include"
       ],
       "defines": [
         "_DEBUG",
@@ -21,7 +22,7 @@
       ],
       "browse": {
         "path": [
-          "/Users/guneetkapur/VEX 24-25/7405M-2024-25"
+          "/Users/guneetkapur/Downloads/7405M-2024-25"
         ],
         "limitSymbolsToIncludedHeaders": true,
         "databaseFilename": ""
