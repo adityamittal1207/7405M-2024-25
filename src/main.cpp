@@ -8,6 +8,7 @@
 #include <atomic>
 #include <csignal>
 #include <cstdio>
+#include <future>
 
 #include "subsystems/Intake.h"
 #include "subsystems/Ladybrown.h"
@@ -135,11 +136,11 @@ lemlib::ControllerSettings lateralController(9, // proportional gain (kP)
 
 
 
-lemlib::ControllerSettings angularController(4, // proportional gain (kP)
-                                              0, // integral gain (kI)
+lemlib::ControllerSettings angularController(5, // proportional gain (kP)
+                                              0.1, // integral gain (kI)
                                               45, // derivative gain (kD)
                                               5, // anti windup
-                                              0.1, // small error range, in inches
+                                              0.5, // small error range, in inches
                                               1000, // small error range timeout, in milliseconds
                                               2, // large error range, in inches
                                               2000, // large error range timeout, in milliseconds
@@ -394,7 +395,6 @@ void disabled() {
  */
 void competition_initialize() {}
 
-
 void soloWP(){
     ladybrown_slow = true;
     ladybrown_class.set_angle(155);
@@ -426,13 +426,17 @@ void soloWP(){
     // chassis.moveToPoint(22.6,-2.4 , 1100);
     pros::delay(500);
     clamp.set_value(false);
-    chassis.moveToPoint(27.2, 30.6, 2000, {.maxSpeed = 80});
+    chassis.moveToPoint(27.2, 30.6, 2000, {.maxSpeed = 60});
 
 
     pros::delay(200);
     colorSensor.set_led_pwm(100);
     while(colorSensor.get_hue() >= 20)
     {
+        // counter++;
+        // if(counter == 1000000){
+        //     break;
+        // }
         ;
     }
     intake_class.set_velocity(-60);
@@ -445,12 +449,13 @@ void soloWP(){
     chassis.moveToPoint(53.8,14.1, 2000, {.forwards=false, .maxSpeed = 60});
 
 
-    pros::delay(500);
+    pros::delay(700);
     clamp.set_value(true);
 
     intake_class.set_velocity(127);
-    chassis.turnToPoint(70, 36.7,600);
-    chassis.moveToPoint(70, 36.7, 1100);
+    // chassis.turnToPoint(68.4, 31.6,600);
+    chassis.turnToHeading(31.7, 600);
+    chassis.moveToPoint(68.4, 31.6, 1100);
     
     ladybrown_class.set_angle(60);
     
@@ -485,11 +490,12 @@ void soloWP(){
 void ladyBrownAutonNegativeRed(){
     ladybrown_slow = true;
     ladybrown_class.set_angle(80);
-    chassis.moveToPoint(0,30, 2000, {.forwards=true, .earlyExitRange = 8});
-    pros::delay(500);
-    intake_class.set_velocity(127);
+    chassis.moveToPoint(0,30, 900);
+    // pros::delay(500);
     colorSensor.set_led_pwm(100);
     int cnt = 0;
+    pros::delay(300);
+    intake_class.set_velocity(127);
     while(colorSensor.get_hue() >= 20 && cnt < 100)
     {
         pros::delay(10);
@@ -499,51 +505,52 @@ void ladyBrownAutonNegativeRed(){
     pros::delay(100);
     intake_class.set_velocity(0);
 
-    chassis.turnToPoint(-15.5, 47.3, 1000);
+    // chassis.turnToPoint(-15.5, 47.3, 1000);
+    chassis.turnToHeading(-44.9, 400);
 
-    chassis.moveToPoint(-15.5,47.6, 2000, {.forwards=true, .maxSpeed = 70, .earlyExitRange = 8}, false);
-    chassis.turnToHeading(-36.3, 300);
+    chassis.moveToPoint(-16.5,47.1, 800);
+    chassis.turnToHeading(-39.6, 400);
+    chassis.waitUntilDone();
     ladybrown_slow = false;
+
     ladybrown_class.set_angle(160);
 
     pros::delay(600);
     ladybrown_class.set_angle(-40);
 
-    chassis.moveToPoint(-5.2, 33.3, 2000, {.forwards=false, .maxSpeed = 127, .earlyExitRange = 8});
+    chassis.moveToPoint(-5.2, 33.3, 800, {.forwards=false}, false);
 
-    pros::delay(800);
     wallrot.set_position(0);
     ladybrown_class.set_angle(0);
     
-    chassis.turnToPoint(13.6, 30.3, 1000, {false});
-    chassis.moveToPoint(13.6, 30.3, 2000, {.forwards=false, .maxSpeed = 127, .earlyExitRange = 8});
-    chassis.moveToPoint(19, 30.4, 2000, {.forwards=false, .maxSpeed = 70, .earlyExitRange = 8}, false);
+    chassis.turnToPoint(13.6, 30.3, 500, {false});
+    chassis.moveToPoint(13.6, 30.3, 900, {.forwards=false, .maxSpeed = 127, .earlyExitRange = 8});
+    chassis.moveToPoint(19, 30.4, 500, {.forwards=false, .maxSpeed = 70}, false);
     clamp.set_value(true);
-    pros::delay(200);
     intake_class.set_velocity(127);
-    chassis.turnToPoint(8, 48.5, 1000);
-    chassis.moveToPoint(8,48.5, 2000, {.forwards=true, .maxSpeed = 70, .earlyExitRange = 8}, false);
+    chassis.turnToPoint(8, 48.5, 500);
+    chassis.moveToPoint(8,48.5, 800);
 
-    chassis.moveToPoint(23.3,31.5, 2000, {.forwards=false, .maxSpeed = 127, .earlyExitRange = 8}, false);
+    chassis.moveToPoint(23.3,31.5, 800, {.forwards=false}, false);
 
-    chassis.turnToPoint(-17.7, -10.7, 2000);
-    chassis.moveToPoint(-17.7,-10.7, 2000, {.forwards=true, .maxSpeed = 80, .earlyExitRange = 8}, false);
+    chassis.turnToPoint(-17.7, -10.7, 500);
+    chassis.moveToPoint(-17.7,-10.7, 800, {}, false);
     move(127, 0);
-    pros::delay(500);
+    pros::delay(1000);
 
-    chassis.moveToPoint(-6,2.1, 2000, {.forwards=false, .maxSpeed = 127, .earlyExitRange = 8}, false);
+    chassis.moveToPoint(-6,2.1, 800, {.forwards=false}, false);
 
-    chassis.turnToPoint(52.3, 5.8, 1000);
+    chassis.turnToPoint(52.3, 5.8, 500);
     raiseasdasd.set_value(true);
     intake_class.set_velocity(0);
-    chassis.moveToPoint(52.3,5.8, 650, {.forwards=true, .maxSpeed = 127, .earlyExitRange = 8}, false);
-    chassis.moveToPoint(52.3,6, 1000, {.forwards=true, .maxSpeed = 30, .earlyExitRange = 8});
-    pros::delay(600);
-    intake_class.set_velocity(127);
-    raiseasdasd.set_value(false);
-    pros::delay(700);
-    chassis.moveToPoint(41.6,6, 1000, {.forwards=false, .maxSpeed = 30, .earlyExitRange = 8}, false);
-    chassis.moveToPoint(52.3,6, 1000, {.forwards=true, .maxSpeed = 60, .earlyExitRange = 8}, false);
+    chassis.moveToPoint(52.3,5.8, 650, {}, false);
+    // chassis.moveToPoint(52.3,6, 400);
+    // pros::delay(600);
+    // intake_class.set_velocity(127);
+    // raiseasdasd.set_value(false);
+    // pros::delay(700);
+    // chassis.moveToPoint(41.6,6, 800, {.forwards=false, .maxSpeed = 30, .earlyExitRange = 8}, false);
+    // chassis.moveToPoint(52.3,6, 800, {.forwards=true, .maxSpeed = 60, .earlyExitRange = 8}, false);
     
 
     chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
@@ -622,6 +629,10 @@ void SixRingBlueRingside(){
     intake_class.set_velocity(0);
     chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
 
+}
+
+void redpositive(){
+    chassis.moveToPoint(0,3, 100);
 }
 
 void autonomous() {
@@ -723,8 +734,11 @@ void opcontrol() {
 
     badcolor = BLUE;
 
-    //soloWP();
-    ladyBrownAutonNegativeRed();
+    // soloWP();
+    // chassis.turnToHeading(90, 3000);
+    // chassis.turnToHeading(180, 3000);
+
+    SixRingBlueRingside();
 
 	// while (true) {
     //     int power = master.get_analog(ANALOG_LEFT_Y) * (1-0.6*speedbool);
