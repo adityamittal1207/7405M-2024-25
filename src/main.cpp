@@ -550,7 +550,7 @@ void ladyBrownAutonNegativeRed(){
     //while(true){}
 }
 
-void SixRingRedRingside(){
+void SixRingBlueRingside(){
     ladybrown_slow = true;
     ladybrown_class.set_angle(155);
     ladybrown_slow = false;
@@ -577,7 +577,7 @@ void SixRingRedRingside(){
 }
 
 
-void SixRingBlueRingside(){
+void SixRingRedRingside(){
     ladybrown_slow = true;
     ladybrown_class.set_angle(155);
     ladybrown_slow = false;
@@ -591,36 +591,136 @@ void SixRingBlueRingside(){
     pros::delay(500);
     clamp.set_value(true);
     ladybrown_class.set_angle(-40);
+    pros::delay(300);
     intake_class.set_velocity(127);
-    pros::delay(800);
+    pros::delay(500);
     wallrot.set_position(0);
     ladybrown_class.set_angle(0);
-    
-    doinker.set_value(true);
-    chassis.turnToPoint(33, -59,1000);
-    chassis.moveToPoint(33, -59, 1000, {.forwards=true, .maxSpeed = 70}); 
-    chassis.moveToPoint(30, -47, 1000, {.forwards=false, .maxSpeed = 60}, false); 
-    doinker.set_value(false);
-    // 29.9, -57
-    //15.4, -53
-    chassis.turnToPoint(29, -58,1000);
-    chassis.moveToPoint(29, -58, 1000, {.forwards=true, .maxSpeed = 90}); 
     chassis.turnToPoint(15.4, -53,1000);
-    chassis.moveToPoint(15.4, -53, 1000, {.forwards=true, .maxSpeed = 90}); 
-    doinker.set_value(true);
-    chassis.turnToHeading(-170, 1000, {}, false);
-    doinker.set_value(false);
-    chassis.turnToPoint(-26, -46,1000);
-    chassis.moveToPoint(-26, -46, 1500, {.forwards=true, .maxSpeed = 127}, false);
     
-    move(127, 0);
-    pros::delay(1000);
-    chassis.moveToPoint(-4, -38, 1500, {.forwards=false, .maxSpeed = 127}, false);
+    chassis.moveToPoint(15.4, -53, 1000, {.forwards=true, .maxSpeed = 90}); 
+    chassis.turnToPoint(34.5, -57.3, 1000);
+    doinker.set_value(true);
+    chassis.moveToPoint(34.5, -57.3, 1000);
+    // 
 
-    chassis.turnToPoint(18.1, 2,1000);
-    chassis.moveToPoint(18.1, 2, 1500, {.forwards=true, .maxSpeed = 127}, false);
+    chassis.turnToPoint(10, -49, 1000, {false});
+    chassis.moveToPoint(10, -49, 1000, {.forwards=false, .maxSpeed = 127}, false);
+    pros::delay(200);
+    doinker.set_value(false); 
+    pros::delay(200);
+
+    // 23.2, -59.6
+    chassis.turnToPoint(23.2, -59.6,1000);
+    chassis.moveToPoint(23.2, -59.6, 1000, {.forwards=true, .maxSpeed = 127}); 
+    
+    // -10.5 -36.1
+
+    chassis.turnToPoint(-5, -9, 1000, {false});
+    chassis.moveToPoint(-5, -39, 3000, {.forwards=false, .maxSpeed = 127}); 
+
+    
+    // -105.3 hdg
+
+    chassis.turnToHeading(-111.5, 1000);
+    // -30 -39
+    chassis.moveToPoint(-28.8, -41, 1000, {.forwards=true, .maxSpeed = 127}, false);
+
+    move(127, 0);
+    pros::delay(500);
+
+    chassis.moveToPoint(-5, -39, 3000, {.forwards=false, .maxSpeed = 127}); 
+
+
+    //23.1, -1
+    chassis.turnToPoint(23.1, -1, 1000, {true}, false);
+    raiseasdasd.set_value(true);
+    chassis.moveToPoint(23.1, -1, 3000, {.forwards=true, .maxSpeed = 127}, false);
+    raiseasdasd.set_value(false);
+    pros::delay(300);
+    chassis.moveToPoint(21, -6, 3000, {.forwards=true, .maxSpeed = 127}, false);
+    
+}
+
+void wallstakeRedNegative(){
+    ladybrown_slow = true;
+    ladybrown_class.set_angle(155);
+    ladybrown_slow = false;
+    autoclamp_bool = false;
+    clamp.set_value(false);
+    pros::delay(600);
+    chassis.moveToPoint(0, -7, 500, {}, false);
+    ladybrown_class.set_angle(-40);
+    pros::delay(300);
+    intake_class.set_velocity(127);
+    pros::delay(500);
+    wallrot.set_position(0);
+    ladybrown_class.set_angle(0);
+    // 13.4, -2.3
+    raiseasdasd.set_value(true);
+    chassis.turnToPoint(15, -1, 1000, {true});
+    chassis.moveToPoint(15, -1, 3000, {.forwards=true, .maxSpeed = 127}, false);
+    raiseasdasd.set_value(false);
+    pros::delay(300);
+    chassis.moveToPoint(11, -6, 3000, {.forwards=false, .maxSpeed = 127}, false);
+    
+    int cnt = 0;
+    colorSensor.set_led_pwm(100);
+    pros::delay(10);
+    colorSensor.set_integration_time(5);
+    
+    while(colorSensor.get_hue() >= 20)
+    {
+        pros::delay(10);
+        cnt++;
+        if(cnt > 1){
+            break;
+        }
+    }
+    intake_class.set_velocity(-60);
+    pros::delay(100);
     intake_class.set_velocity(0);
-    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
+
+    chassis.turnToPoint(21, -28, 1000, {false});
+    chassis.moveToPoint(21, -29.5, 2000, {.forwards=false, .earlyExitRange = 8});  
+    pros::delay(950);
+    clamp.set_value(true);
+
+    pros::delay(300);
+    intake_class.set_velocity(127);
+    chassis.turnToPoint(-5, -39, 1000, {true});
+    chassis.moveToPoint(-5, -39, 3000, {.forwards=true, .maxSpeed = 127}); 
+
+    
+    // -105.3 hdg
+
+    chassis.turnToHeading(-111.5, 1000, {}, false);
+    // -30 -39
+
+    move(127, 0);
+    pros::delay(1200);
+
+    chassis.moveToPoint(-5, -39, 3000, {.forwards=false, .maxSpeed = 127}); 
+    chassis.turnToPoint(15.4, -53,1000);
+    ladybrown_class.set_angle(targetWait);
+    pros::delay(400);
+    chassis.moveToPoint(15.4, -53, 1000, {.forwards=true, .maxSpeed = 90});
+    pros::delay(1000);
+    ladybrown_class.set_angle(80); 
+    doinker.set_value(true);
+    chassis.turnToHeading(250, 1000);
+    
+
+    chassis.turnToPoint(30.2, -63.3, 1000);
+    doinker.set_value(true);
+    chassis.moveToPoint(30.2, -63.3, 1000);
+
+    chassis.turnToHeading(-130, 1000, {}, false);
+    doinker.set_value(false);
+    pros::delay(300);
+    chassis.turnToPoint(11.9, -66.1, 1000);
+    
+    chassis.moveToPoint(11.9, -66.1, 1000);
 
 }
 
@@ -724,7 +824,8 @@ void opcontrol() {
     badcolor = BLUE;
 
     //soloWP();
-    ladyBrownAutonNegativeRed();
+    wallstakeRedNegative();
+    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
 
 	// while (true) {
     //     int power = master.get_analog(ANALOG_LEFT_Y) * (1-0.6*speedbool);
