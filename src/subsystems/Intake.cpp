@@ -21,15 +21,15 @@ double Intake::get_velocity(){
     //     return -127.0;
     // }
 
-    // if (outtake_duration_counter > 0){
-    //     jammed = false;
-    //     outtake_duration_counter = 0;
-    // }
+    if (outtake_duration_counter > 0){
+        jammed = false;
+        outtake_duration_counter --;
+    }
 
-    // if (jammed){
-    //     outtake_duration_counter++;
-    //     return -127.0;
-    // }
+    if (jammed){
+         outtake_duration_counter =  20;
+         return -127.0;
+    }
 
     return target_velocity;
 }
