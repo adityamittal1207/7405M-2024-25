@@ -21,9 +21,9 @@ class Ladybrown{
     bool waitUntilDone();
 
     void update(double _cur_angle) {
-        
-        cur_angle = _cur_angle/100.0f;
         prev_angle = cur_angle;
+        cur_angle = _cur_angle/100.0f;
+        
         }
         
     void rest(){

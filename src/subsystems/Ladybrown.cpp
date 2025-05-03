@@ -22,10 +22,10 @@ double Ladybrown::get_velocity(bool isDown){
     if(rested){
         return 0;
     }
-    return((0.02f*127*(target_angle-cur_angle) 
-    - 15.0f*(prev_angle-cur_angle))> 127 
-    ? 127 : (0.02f*127*(target_angle-cur_angle) 
-    - 15.0f*(prev_angle-cur_angle)));
-    prev_angle = cur_angle;
+    return((0.01f*127*(target_angle-cur_angle) 
+    - 0*-(prev_angle-cur_angle))> 127 
+    ? 127 : (0.01f*127*(target_angle-cur_angle) 
+    - 0*-(prev_angle-cur_angle)));
+    
 }
 

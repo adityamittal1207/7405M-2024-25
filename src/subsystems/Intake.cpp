@@ -3,33 +3,24 @@
 Intake::Intake() {}
 
 void Intake::update(double torque){
-    if(torque > maxTorque){
-        detect_jam_counter++;
-    }
-    else {
-        detect_jam_counter = 0;
+    printf("%f \n", torque);
+    if(torque > 0.5f){
+        detect_jam_counter = 30;
     }
 }
 
 
 double Intake::get_velocity(){
 
-    jammed = detect_jam_counter > 22.5;
-
+    if(detect_jam_counter > 0){
+        detect_jam_counter--;
+        printf("a");
+        return -127;
+    }
     // if(releasedMogo){
     //     --releasedMogo;
     //     return -127.0;
     // }
-
-    if (outtake_duration_counter > 0){
-        jammed = false;
-        outtake_duration_counter --;
-    }
-
-    if (jammed){
-         outtake_duration_counter =  20;
-         return -127.0;
-    }
 
     return target_velocity;
 }
