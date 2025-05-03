@@ -1981,14 +1981,15 @@ void worldsRingRush() {
 
     ladybrown_class.set_angle(45);
 
-    chassis.moveToPoint(1, 52.2, 1500, {.maxSpeed = 70});
-    pros::delay(870);
+    chassis.moveToPoint(0, 54, 1500);
+    pros::delay(450);
     doinker2.set_value(true);
     intake_class.set_velocity(127);
     chassis.waitUntilDone();
     intake_class.set_velocity(0);
 
-    chassis.moveToPoint(-8, 20.15, 1400, {.forwards = false, .maxSpeed = 70});
+    chassis.turnToPoint(-1.3, 20.3, 800, {.forwards = false});
+    chassis.moveToPoint(-1.3, 20.3, 1400, {.forwards = false, .maxSpeed = 70});
 
     chassis.waitUntilDone();
 
@@ -1996,11 +1997,11 @@ void worldsRingRush() {
 
     pros::delay(400);
 
-    chassis.turnToPoint(6.2, 27.6, 900, {.forwards = false});
+    chassis.turnToPoint(9.7, 27.2, 900, {.forwards = false});
     
-    chassis.moveToPoint(6.2, 27.6, 1200, {.forwards = false, .maxSpeed = 60});
+    chassis.moveToPoint(9.7, 27.2, 1200, {.forwards = false, .maxSpeed = 60});
 
-    pros::delay(800);
+    pros::delay(20000000);
 
     clamp.set_value(true);
 

@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "redringsidefsawgdrj",
+    "project_name": "AUTON",
     "target": "v5",
     "templates": {
       "LemLib": {
