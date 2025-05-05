@@ -238,12 +238,11 @@ void intake_thread(){
  while(true){
  intake_class.update(intake.get_torque());
  if(inColor(color_sort.get_hue())){
- intake.move_velocity(50);
+    
+ intake.move(127);
+    pros::delay(50);
+ intake.move(0);
  pros::delay(200);
- // intake.move(-50);
- // pros::delay(100);
- intake.move_velocity(0);
- pros::delay(300);
  continue;
  }
  intake.move(intake_class.get_velocity());
@@ -380,7 +379,7 @@ void rotate_to(double targetHeading, double turnAcc, double maxSpeed, bool swing
 void negaYogineni(){
     intake_class.set_velocity(127);
     clamp.set_value(true);
-    chassis.moveToPoint(0, 15, 2000, {.maxSpeed = 80});
+    chassis.moveToPoint(0, 25, 2000, {.maxSpeed = 80});
     badcolor = RED;
 
 }
@@ -1099,14 +1098,17 @@ void doublebakerBlueL(){
  chassis.moveToPoint(-11.5, 2, 400, {.maxSpeed = 100, .earlyExitRange = 7});
 
  chassis.moveToPoint(-20.7, 2.7, 800, {.maxSpeed = 40});
- 
+    
+    
  chassis.turnToPoint(-3.6, -17.8, 1000);
- chassis.moveToPoint(20.7, -44.1, 2000, {.maxSpeed = 65});
-
+ chassis.moveToPoint(20.7, -44.1, 2000, {.maxSpeed = 45});
+// pros::delay(1010101010101010101010010101011);
  // pros::delay(32949234923423242342434234);
 
- chassis.turnToPoint(51.8, -22, 650);
- chassis.moveToPoint(51.8, -22, 900, {.maxSpeed = 127}, false);
+ chassis.turnToPoint(35.6, -29.3, 650);
+ chassis.moveToPoint(35.6, -29.3, 900, {.maxSpeed = 127}, false);
+  chassis.turnToPoint(53.8, -23, 650);
+ chassis.moveToPoint(53.8, -23, 900, {.maxSpeed = 127}, false);
 
  move(90, 0);
 
@@ -2163,11 +2165,11 @@ void opcontrol() {
  int rumblecounter = 0;
  ladybrown_manual.store(false);
  
- //bakerBlueL();
+//  bakerBlueL();
 //  WorldsAWP();
 //worldsRingRush();
-//negaYogineni();
-    //doublebakerBlueL();
+// negaYogineni();
+    doublebakerBlueL();
 
  // goGoGadgetRedRingSide();
 
@@ -2186,7 +2188,7 @@ void opcontrol() {
  intake_class.maxTorque = 0.3;
 
 
- //pros::delay(394923493423949234324343224234234);
+ pros::delay(394923493423949234324343224234234);
 
  chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
  
