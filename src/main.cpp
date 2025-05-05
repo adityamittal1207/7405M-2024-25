@@ -39,16 +39,16 @@ DRIVE MOTORS
 */
 
 pros::Motor left_front_motor(6, pros::E_MOTOR_GEAR_BLUE, false);
-pros::Motor left_center_motor(12, pros::E_MOTOR_GEAR_BLUE , false);
-pros::Motor left_back_motor(13, pros::E_MOTOR_GEAR_BLUE , false); 
-pros::Motor right_front_motor(1, pros::E_MOTOR_GEAR_BLUE , true);
+pros::Motor left_center_motor(17, pros::E_MOTOR_GEAR_BLUE , false);
+pros::Motor left_back_motor(3, pros::E_MOTOR_GEAR_BLUE , false); 
+pros::Motor right_front_motor(10, pros::E_MOTOR_GEAR_BLUE , true);
 pros::Motor right_center_motor(2, pros::E_MOTOR_GEAR_BLUE , true);
-pros::Motor right_back_motor(11, pros::E_MOTOR_GEAR_BLUE , true);
+pros::Motor right_back_motor(1, pros::E_MOTOR_GEAR_BLUE , true);
 
-pros::Motor intake(3, pros::E_MOTOR_GEAR_BLUE, false);
+pros::Motor intake(20, pros::E_MOTOR_GEAR_BLUE, false);
 
-pros::Imu inertial_sensor(7);
-pros::Optical colorSensor(4);
+pros::Imu inertial_sensor(5);
+pros::Optical colorSensor(15);
 pros::Distance intakeDistSensor(16);
 
 
@@ -60,7 +60,7 @@ pros::Motor intake2(0);
 
 Intake intake_class;
 
-pros::Motor wallmotor(14, pros::E_MOTOR_GEAR_RED , true);
+pros::Motor wallmotor(11, pros::E_MOTOR_GEAR_RED , true);
 
 Ladybrown ladybrown_class;
 
@@ -72,11 +72,11 @@ PNEUMATICS
 PNEUMATICS
 */
 
-pros::ADIDigitalOut clamp('H'); //backwings H, F
+pros::ADIDigitalOut clamp('A'); //backwings H, F
 pros::ADIDigitalOut hangs('Z');
-pros::ADIDigitalOut doinker('G');
-pros::ADIDigitalOut doinker2('A');
-pros::ADIDigitalOut raiseasdasd('F');
+pros::ADIDigitalOut doinker('B');
+pros::ADIDigitalOut doinker2('C');
+pros::ADIDigitalOut raiseasdasd('D');
 pros::ADIDigitalOut leftdoinker('D');
 pros::ADIAnalogOut doinkerclamp('E');
 
@@ -100,16 +100,16 @@ lemlib::Drivetrain drivetrain {
 SENSORS
 */
 
-pros::Rotation wallrot(8, false); 
+pros::Rotation wallrot(4, false); 
 
-pros::Rotation horizontal_rot(15); // port 1, not reversed
-pros::Rotation vertical_rot(9); // port 1, not reversed
+pros::Rotation horizontal_rot(19); // port 1, not reversed
+pros::Rotation vertical_rot(18); // port 1, not reversed
 
 lemlib::TrackingWheel horizontal_track(&horizontal_rot, lemlib::Omniwheel::NEW_275 , -0.8f); // 0.6 -0.9
 lemlib::TrackingWheel vertical_track(&vertical_rot, lemlib::Omniwheel::NEW_2 , -0.53f); // 0.6 -0.
 
 pros::Distance distance_sensor(18);
-pros::Optical color_sort(16);
+pros::Optical color_sort(15);
 
 lemlib::OdomSensors sensors {
  &vertical_track, // vertical tracking wheel 1
@@ -238,11 +238,11 @@ void intake_thread(){
  while(true){
  intake_class.update(intake.get_torque());
  if(inColor(color_sort.get_hue())){
- intake.move(127);
- pros::delay(50);
+ intake.move_velocity(50);
+ pros::delay(200);
  // intake.move(-50);
  // pros::delay(100);
- intake.move(0);
+ intake.move_velocity(0);
  pros::delay(300);
  continue;
  }
@@ -377,6 +377,13 @@ void rotate_to(double targetHeading, double turnAcc, double maxSpeed, bool swing
  move(0, 0);
 }
 
+void negaYogineni(){
+    intake_class.set_velocity(127);
+    clamp.set_value(true);
+    chassis.moveToPoint(0, 15, 2000, {.maxSpeed = 80});
+    badcolor = RED;
+
+}
 
 void bakerAuton(){
  ladybrown_slow = true;
@@ -1057,8 +1064,8 @@ void doublebakerBlueL(){
  doinker2.set_value(true);
  pros::delay(300);
  // pros::delay(342493294234923432249242394324234424234);
- chassis.turnToHeading(-134, 800);
- chassis.moveToPoint(-24.5, -39.5, 550, {.maxSpeed = 127, .minSpeed = 50}, true);
+ chassis.turnToHeading(-134, 550);
+ chassis.moveToPoint(-24.5, -39.5, 450, {.maxSpeed = 127, .minSpeed = 50}, true);
  pros::delay(150);
  doinker.set_value(true);
 
@@ -1071,7 +1078,7 @@ void doublebakerBlueL(){
 
  chassis.turnToPoint(11.44, -9.2, 400, {.forwards = false});
 
- chassis.moveToPoint(11.44, -9.2, 1500, {.forwards = false, .maxSpeed = 120}, false);
+ chassis.moveToPoint(11.44, -9.2, 1500, {.forwards = false, .maxSpeed = 80}, false);
 
  doinker2.set_value(false);
  doinker.set_value(false);
@@ -1084,11 +1091,14 @@ void doublebakerBlueL(){
 
  // 20.7, -44.1
 
- chassis.turnToPoint(-12.4, 3.6, 700);
 
- chassis.moveToPoint(-12.4, 3.6, 400, {.maxSpeed = 100, .earlyExitRange = 7});
+ chassis.turnToPoint(-11.5, 2, 700);
 
- chassis.moveToPoint(-21, 9, 800, {.maxSpeed = 40});
+
+
+ chassis.moveToPoint(-11.5, 2, 400, {.maxSpeed = 100, .earlyExitRange = 7});
+
+ chassis.moveToPoint(-20.7, 2.7, 800, {.maxSpeed = 40});
  
  chassis.turnToPoint(-3.6, -17.8, 1000);
  chassis.moveToPoint(20.7, -44.1, 2000, {.maxSpeed = 65});
@@ -1979,9 +1989,9 @@ void worldsRingRush() {
 
     badcolor = BLUE;
 
-    ladybrown_class.set_angle(45);
+    ladybrown_class.set_angle(65);
 
-    chassis.moveToPoint(0, 54, 1500);
+    chassis.moveToPoint(0, 54, 1200, {.maxSpeed = 85, .minSpeed = 10, .earlyExitRange = 1});
     pros::delay(450);
     doinker2.set_value(true);
     intake_class.set_velocity(127);
@@ -2001,11 +2011,12 @@ void worldsRingRush() {
     
     chassis.moveToPoint(9.7, 27.2, 1200, {.forwards = false, .maxSpeed = 60});
 
-    pros::delay(20000000);
+    
 
-    clamp.set_value(true);
+    
 
     chassis.waitUntilDone();
+    clamp.set_value(true);
 
     // pros::delay(9924949442424424424424);
 
@@ -2017,13 +2028,17 @@ void worldsRingRush() {
 
     intake_class.set_velocity(127);
 
-    chassis.turnToPoint(-19, 42.7, 900, {.forwards = true});
+    chassis.turnToPoint(-2, 33.4, 900, {.forwards = true});
 
-    chassis.moveToPoint(-19, 42.7, 1000);
+    chassis.moveToPoint(-2, 33.4, 1000);
 
-    chassis.turnToPoint(-28.3, 12.6, 900, {.forwards = true});
+    chassis.turnToPoint(-15.9, 30.7, 900, {.forwards = true});
 
-    chassis.moveToPoint(-28.3, 12.6, 1000);
+    chassis.moveToPoint(-15.9, 30.7, 1000);
+
+    chassis.turnToPoint(-19.3, 11.6, 900, {.forwards = true});
+
+    chassis.moveToPoint(-19.3, 11.6, 1000, {}, false);
 
     chassis.turnToPoint(-35, 9.6, 900, {.forwards = true});
 
@@ -2148,9 +2163,11 @@ void opcontrol() {
  int rumblecounter = 0;
  ladybrown_manual.store(false);
  
- // bakerBlueL();
+ //bakerBlueL();
 //  WorldsAWP();
-worldsRingRush();
+//worldsRingRush();
+//negaYogineni();
+    //doublebakerBlueL();
 
  // goGoGadgetRedRingSide();
 
@@ -2162,14 +2179,14 @@ worldsRingRush();
  //chassis.turnToHeading(getAngleToPoint(10, 0), 1000);
  //chassis.moveToPoint(10, 0, 1000);
 
- badcolor = DRIVER;
+ badcolor = RED;
 
  //soloWP();
 
  intake_class.maxTorque = 0.3;
 
 
- pros::delay(394923493423949234324343224234234);
+ //pros::delay(394923493423949234324343224234234);
 
  chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
  
