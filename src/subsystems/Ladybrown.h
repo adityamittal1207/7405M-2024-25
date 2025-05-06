@@ -11,6 +11,7 @@ class Ladybrown{
         bool rested = false;
 
     public:
+    
     Ladybrown();
 
     void set_angle(double _target_angle) {
