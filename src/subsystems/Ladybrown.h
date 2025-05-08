@@ -9,14 +9,16 @@ class Ladybrown{
         double prev_angle;
         bool checker = false;
         bool rested = false;
+        double p = 0.0125f;
 
     public:
     
     Ladybrown();
 
-    void set_angle(double _target_angle) {
+    void set_angle(double _target_angle, double _p = 0.0125) {
         rested = false;
         target_angle = _target_angle;
+        p = _p;
     }
     double get_velocity(bool isDown = false);
     bool waitUntilDone();
