@@ -138,10 +138,10 @@ lemlib::ControllerSettings lateralController(5.8, // proportional gain (kP)
 
 
 
-lemlib::ControllerSettings angularController(3.25, // proportional gain (kP)
+lemlib::ControllerSettings angularController(3.2, // proportional gain (kP)
  0, // integral gain (kI)
- 38, // derivative gain (kD)
- 3, // anti windup
+ 39, // derivative gain (kD)
+ 0, // anti windup
  0.01, // small error range, in inches
  1000, // small error range timeout, in milliseconds
  0.2, // large error range, in inches
@@ -1656,7 +1656,7 @@ void bakerRedDoubleStack(){
    
     // pros::delay(3949249234992434342343434234);
    
-    chassis.turnToPoint(20.4, -36, 700, {.maxSpeed = 80});
+    chassis.turnToPoint(20.4, -36, 600, {.maxSpeed = 100});
     //chassis.turnToPoint(-20.5, -36.3, 700);
     pros::delay(500);
     wallrot.set_position(0);
@@ -1665,7 +1665,7 @@ void bakerRedDoubleStack(){
 
     // pros::delay(249294929492442424242424);
     
-    chassis.moveToPoint(20.4, -36, 650, {.maxSpeed = 80}, true);
+    chassis.moveToPoint(20.4, -36, 725, {.maxSpeed = 83.5}, true);
    
     // pros::delay(3294923942394234234242344);
     // -1, 11
@@ -1674,53 +1674,29 @@ void bakerRedDoubleStack(){
     chassis.waitUntilDone();
 
     pros::delay(300);
-    // pros::delay(342493294234923432249242394324234424234);
    
-    // pros::delay(92394932493424324234234);
-    
-    // pros::delay(4392349234324234234234234);
-    // pros::delay(300);
-    // chassis.turnToPoint(13.9, -19.9, 200, {false});
-    // chassis.waitUntilDone();
-   
-    // chassis.turnToPoint(-11.44, -9.2, 400, {.forwards = false});
-   
-    chassis.moveToPoint(-8.3, -23, 900, {.forwards = false, .maxSpeed = 100}, false);
+    chassis.moveToPoint(-8.3, -23, 800, {.forwards = false, .maxSpeed = 100}, false);
    
     doinker.set_value(false);
     doinker2.set_value(false);
-
-    // pros::delay(9494294244244242424242424242424);
    
     intake_class.set_velocity(127);
     pros::delay(420);
     
    
-    // -12.4, 3.6
-   
-    // 20.7, -44.1
-   
    
     chassis.turnToPoint(5.3, -3, 600);
 
 
-   
-
-   // 2.4, -1.3
-
-   //
-
-//    pros::delay(2949249249249242424242);
-
    raiseasdasd.set_value(true);
 
-    chassis.moveToPoint(5.3, -3, 1200, {.maxSpeed = 50}, false);
+    chassis.moveToPoint(5.3, -3, 800, {.maxSpeed = 80}, false);
     raiseasdasd.set_value(false);
 
-    chassis.moveToPoint(-0.2, -10.6, 800, {.forwards = false, .maxSpeed = 50});
+    chassis.moveToPoint(-0.2, -10.6, 550, {.forwards = false, .maxSpeed = 80});
 
     // pros::delay(224242424224242442424);
-
+//-18, -44
 
 // -4.5, -21.5
 
@@ -1732,29 +1708,171 @@ chassis.turnToPoint(0.98, -33.8, 650);
 // -16.9, -40.4
 
 chassis.turnToPoint(-17.6, -39.8, 650);
-    chassis.moveToPoint(-17.6, -39.8, 800, {.maxSpeed = 127}, false);
+    chassis.moveToPoint(-18, -44, 800, {.maxSpeed = 127}, false);
 //    pros::delay(1010101010101010101010010101011);
+    //doinker.set_value(true);
+    //chassis.turnToHeading(180, 650);
 
     chassis.turnToPoint(-32.6, -21.9, 650);
 
-    // pros::delay(32949234923423242342434234);
+    //pros::delay(32949234923423242342434234);
 
-    chassis.moveToPoint(-32.6, -21.9, 800, {.maxSpeed = 127}, false);
+    chassis.moveToPoint(-35, -21.9, 800, {.maxSpeed = 127}, false);
     chassis.turnToPoint(-53.1, -16.5, 650);
     chassis.moveToPoint(-53.1, -16.5, 950, {.maxSpeed = 70, .minSpeed=45});
 
     chassis.waitUntilDone();
 
-    move(50, 0);
+    move(30, 0);
 
-    pros::delay(150);
+    pros::delay(250);
 
     move(0,0);
 
     // pros::delay(9492429492492442424242424);
 
-    chassis.moveToPoint(-47.7, -18.2, 800, {.forwards = false, .maxSpeed = 60, .minSpeed=40},false);
+    chassis.moveToPoint(-45.6, -16, 800, {.forwards = false, .maxSpeed = 45, .minSpeed=40},false);
+    pros::delay(100);
 
+    raiseasdasd.set_value(true);
+
+    pros::delay(300);
+
+    chassis.moveToPoint(-53.1, -16.5, 800, {.maxSpeed = 80, .minSpeed=30});
+
+    chassis.waitUntilDone();
+
+    move(70, 0);
+
+    //pros::delay(3000000000000000);
+
+    raiseasdasd.set_value(false);
+
+    move(-50, 0);
+
+    pros::delay(949294924994242424242424);   
+}
+
+
+
+void doublebaker(){
+
+    badcolor = BLUE;
+    raiseasdasd.set_value(false);
+    ladybrown_class.set_angle(150);
+    autoclamp_bool = false;
+    clamp.set_value(false);
+    
+    chassis.moveToPoint(-0.3, 7, 500);
+    pros::delay(500);
+    
+    chassis.moveToPoint(0, -25, 500, {.forwards=false, .maxSpeed = 127}); 
+    chassis.moveToPoint(0, -27, 800, {.forwards=false, .maxSpeed = 50, .minSpeed = 10}); 
+    
+    pros::delay(550);
+    clamp.set_value(true);
+    ladybrown_class.set_angle(-40);
+   
+    
+   
+    // -19, -39
+    //-106
+    //chassis.turnToPoint(-20.4, -37.2, 800);
+   
+    // pros::delay(3949249234992434342343434234);
+   
+    chassis.turnToPoint(20.4, -36, 600, {.maxSpeed = 127});
+    //chassis.turnToPoint(-20.5, -36.3, 700);
+    pros::delay(500);
+    wallrot.set_position(0);
+    ladybrown_class.set_angle(0);
+    chassis.waitUntilDone();
+
+    // pros::delay(249294929492442424242424);
+    
+    chassis.moveToPoint(20.4, -36, 900, {.maxSpeed = 80}, true);
+   
+    // pros::delay(3294923942394234234242344);
+    // -1, 11
+    doinker.set_value(true);
+    // doinker2.set_value(true);
+
+
+    chassis.waitUntilDone();
+
+    chassis.turnToHeading(139, 900);
+    chassis.moveToPoint(23.5, -38.5, 700, {.forwards = false, .minSpeed = 80});
+    doinker2.set_value(true);
+    pros::delay(200);
+
+    chassis.turnToPoint(-12.8, -28.5, 700, {.forwards = false});
+    chassis.moveToPoint(-12.8, -28.5, 2000, {.forwards = false, .minSpeed = 10, .earlyExitRange = 2});
+    // -12.8,-28.5
+    pros::delay(234567892346789);
+
+
+    
+    chassis.waitUntilDone();
+
+    pros::delay(300);
+   
+   
+    doinker.set_value(false);
+    doinker2.set_value(false);
+
+   
+    intake_class.set_velocity(127);
+    pros::delay(420);
+    
+   
+   
+    chassis.turnToPoint(5.3, -3, 600);
+
+
+   raiseasdasd.set_value(true);
+
+    chassis.moveToPoint(5.3, -3, 800, {.maxSpeed = 127}, false);
+    raiseasdasd.set_value(false);
+
+    chassis.moveToPoint(-0.2, -10.6, 550, {.forwards = false, .maxSpeed = 127});
+
+    // pros::delay(224242424224242442424);
+//-18, -44
+
+// -4.5, -21.5
+
+chassis.turnToPoint(0.98, -33.8, 650);
+
+// pros::delay(9492429424242424242424424);
+    chassis.moveToPoint(0.98, -33.8, 900, {.maxSpeed = 127}, false);
+
+// -16.9, -40.4
+
+chassis.turnToPoint(-17.6, -39.8, 650);
+    chassis.moveToPoint(-18, -44, 800, {.maxSpeed = 127}, false);
+//    pros::delay(1010101010101010101010010101011);
+    //doinker.set_value(true);
+    //chassis.turnToHeading(180, 650);
+
+    chassis.turnToPoint(-32.6, -21.9, 650);
+
+    //pros::delay(32949234923423242342434234);
+
+    chassis.moveToPoint(-35, -21.9, 800, {.maxSpeed = 127}, false);
+    chassis.turnToPoint(-53.1, -16.5, 650);
+    chassis.moveToPoint(-53.1, -16.5, 950, {.maxSpeed = 70, .minSpeed=45});
+
+    chassis.waitUntilDone();
+
+    move(30, 0);
+
+    pros::delay(250);
+
+    move(0,0);
+
+    // pros::delay(9492429492492442424242424);
+
+    chassis.moveToPoint(-45.6, -16, 800, {.forwards = false, .maxSpeed = 45, .minSpeed=40},false);
     pros::delay(100);
 
     raiseasdasd.set_value(true);
@@ -1767,7 +1885,7 @@ chassis.turnToPoint(-17.6, -39.8, 650);
 
     move(70, 0);
 
-    pros::delay(300);
+    //pros::delay(3000000000000000);
 
     raiseasdasd.set_value(false);
 
@@ -1791,7 +1909,7 @@ void newBakerBlueL(){
     pros::delay(200);
     
     chassis.moveToPoint(0, -25, 500, {.forwards=false, .maxSpeed = 80}); 
-    chassis.moveToPoint(0, -27, 800, {.forwards=false, .maxSpeed = 50, .minSpeed = 10}); 
+    chassis.moveToPoint(0, -27, 800, {.forwards=false, .maxSpeed = 60, .minSpeed = 10}); 
     
     pros::delay(550);
     clamp.set_value(true);
@@ -1860,10 +1978,10 @@ void newBakerBlueL(){
 //    pros::delay(2949249249249242424242);
 
    raiseasdasd.set_value(true);
-    chassis.moveToPoint(-5.3, -3, 900, {.maxSpeed = 75}, false);
+    chassis.moveToPoint(-5.3, -3, 900, {.maxSpeed = 85}, false);
     raiseasdasd.set_value(false);
 
-    chassis.moveToPoint(0.3, -10.9, 800, {.forwards = false, .maxSpeed = 50});
+    chassis.moveToPoint(0.3, -10.9, 800, {.forwards = false, .maxSpeed = 60});
 
     // pros::delay(224242424224242442424);
 
@@ -1892,14 +2010,8 @@ chassis.turnToPoint(17.2, -43.8, 650);
 
     // DOUBLE
     
-
-
-    // LADDER
-
-
-
     chassis.turnToPoint(54, -19, 550);
-    chassis.moveToPoint(54, -19, 800, {.maxSpeed = 70, .minSpeed=45});
+    chassis.moveToPoint(54, -19, 800, {.maxSpeed = 80, .minSpeed=45});
 
     chassis.waitUntilDone();
 
@@ -1909,11 +2021,47 @@ chassis.turnToPoint(17.2, -43.8, 650);
 
     move(0,0);
 
-    chassis.moveToPoint(0.4,-33.8, 500, {.forwards = false, .maxSpeed = 100});
+    chassis.moveToPoint(-46.5, -19.5, 800, {.forwards = false, .maxSpeed = 45, .minSpeed=40},false);
+    pros::delay(100);
+
+    raiseasdasd.set_value(true);
+
+    pros::delay(400);
+
+    chassis.moveToPoint(54, -19, 800, {.maxSpeed = 80, .minSpeed=30});
+
+    chassis.waitUntilDone();
+
+    move(70, 0);
+
+    //pros::delay(3000000000000000);
+
+    raiseasdasd.set_value(false);
+
+    move(-50, 0);
+
+    pros::delay(949294924994242424242424);   
+
+    // LADDER
+
+
+
+    chassis.turnToPoint(54, -19, 550);
+    chassis.moveToPoint(54, -19, 800, {.maxSpeed = 80, .minSpeed=45});
+
+    chassis.waitUntilDone();
+
+    move(50, 0);
+
+    pros::delay(150);
+
+    move(0,0);
+
+    chassis.moveToPoint(0.4,-33.8, 500, {.forwards = false, .maxSpeed = 110});
 
     chassis.turnToHeading(-120, 800);
 
-    chassis.moveToPoint(0.4,-33.8, 700, {.forwards = true, .maxSpeed = 100});
+    chassis.moveToPoint(0.4,-33.8, 700, {.forwards = true, .maxSpeed = 110});
 
     pros::delay(250);
 
@@ -3057,11 +3205,13 @@ void autonomous() {
     // bakerRedL();
     // newBakerBlueL();
    // shitlbmogo();
-   movef();
+   //movef();
     // WorldsAWP();
  //bakerRed();
  //fivePlusOneBlue();
  //fivePlusOneRed();
+
+ bakerRedDoubleStack();
 }
 void opcontrol() {
 
@@ -3120,6 +3270,9 @@ void opcontrol() {
  
  //chassis.turnToHeading(getAngleToPoint(10, 0), 1000);
  //chassis.moveToPoint(10, 0, 1000);
+
+//  doublebaker();
+// bakerRedDoubleStack
 
 
 // WorldsAWP();
